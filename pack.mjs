@@ -5,8 +5,8 @@ import { fileURLToPath } from "node:url";
 const root = fileURLToPath(new URL(".", import.meta.url));
 const base = resolve(root, "docs");
 const read = (file) => readFile(resolve(base, file), "utf8");
-const [html, css, json, app] = await Promise.all([
-  read("index.html"), read("styles.css"), read("portfolio.json"), read("app.js"),
+const [html, css, showroomCss, json, showroom, app] = await Promise.all([
+  read("index.html"), read("styles.css"), read("showroom.css"), read("portfolio.json"), read("showroom.js"), read("app.js"),
 ]);
 const types = {
   ".webp": "image/webp", ".jpg": "image/jpeg", ".jpeg": "image/jpeg",
@@ -28,6 +28,8 @@ await collect("media");
 const script = (source) => "<script>\n" + source.replace(/<\/script/gi, "<\\/script") + "\n</script>";
 const bundled = html
   .replace('<link rel="stylesheet" href="styles.css">', () => "<style>\n" + css + "\n</style>")
+  .replace('<link rel="stylesheet" href="showroom.css">', () => "<style>\n" + showroomCss + "\n</style>")
+  .replace('<script src="showroom.js"></script>', () => script(showroom))
   .replace('<script src="app.js"></script>', () => script(
     "window.PORTFOLIO_MEDIA = " + JSON.stringify(assets) + ";\n" +
     "window.PORTFOLIO = " + JSON.stringify(JSON.parse(json)) + ";\n" + app,

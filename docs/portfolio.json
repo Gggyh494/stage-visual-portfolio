@@ -91,6 +91,14 @@
           "alt": "从观众席看向主屏、灯束及表演台",
           "label": "全场预演",
           "note": "观众视角 · 概念渲染"
+        },
+        {
+          "type": "video",
+          "label": "声波开场",
+          "src": "/media/motion/afterimage.mp4",
+          "poster": "/media/motion/afterimage.webp",
+          "note": "紫银波形和金属曲面随光扫显形。巡演主屏 · 3:1 · 7 秒。",
+          "showcase": true
         }
       ],
       "cardImage": "/media/afterimage-led.webp",
@@ -123,6 +131,14 @@
           "alt": "酒红玻璃香氛瓶与银色流体环绕的产品画面",
           "label": "主屏关键画面",
           "note": "产品登场 · 概念静帧"
+        },
+        {
+          "type": "video",
+          "label": "暖铜揭幕",
+          "src": "/media/motion/liquid-form.mp4",
+          "poster": "/media/motion/liquid-form.webp",
+          "note": "暖铜光环由暗到明，托出产品轮廓。品牌发布会 · 4:1 · 7 秒。",
+          "showcase": true
         }
       ]
     },
@@ -146,6 +162,14 @@
           "alt": "完整视角展示混凝土空间内的玻璃斜面和青色光雾",
           "label": "空间预演",
           "note": "观众动线 · 概念渲染"
+        },
+        {
+          "type": "video",
+          "label": "光场行进",
+          "src": "/media/motion/soft-signal.mp4",
+          "poster": "/media/motion/soft-signal.webp",
+          "note": "青色斜面和光雾依次亮起，表现空间的纵深。沉浸式演出 · 32:9 · 7 秒。",
+          "showcase": true
         }
       ]
     }

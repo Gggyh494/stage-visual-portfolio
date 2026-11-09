@@ -20,7 +20,17 @@
 
 ## 线上编辑素材
 
-访问网站末尾的 `/admin/`，或直接进入 [Pages CMS](https://app.pagescms.org/)。用 GitHub 登录，把 Pages CMS 的 GitHub App 授权给**该作品集仓库**，然后打开「舞台作品集」。字段和上传目录已在 `.pages.yml` 配好；保存内容会写回仓库，随后由 GitHub Pages 更新公开页面。访客不需要登录，也不会得到编辑权限。配置步骤见 [Pages CMS 快速开始](https://pagescms.org/docs/quick-start/)。
+从 [线上管理入口](https://gggyh494.github.io/stage-visual-portfolio/admin/) 登录 GitHub，用「素材库」上传文件，用「编辑项目」替换 JSON 里的媒体地址。GitHub Pages 会在 `main` 更新后自动重新发布。可在本机管理页完成更换再提交；带 `showcase: true` 的视频同时进入首页「舞台展映」。
+
+Pages CMS 的字段定义保留在 `.pages.yml`，当前使用 GitHub 登录管理。
+
+## 舞台展映
+
+- 声波开场：3:1，紫银巡演主屏。
+- 暖铜揭幕：4:1，品牌发布会主屏。
+- 光场行进：32:9，沉浸空间预览。
+
+三段样片均为 7 秒 H.264 MP4，按原画幅播放。首页可选章节、播放、暂停、拖动和全屏，离开播放器后暂停。
 
 ## 长画幅与素材
 
@@ -28,3 +38,5 @@
 - 案例把项目全景、现场视频和屏幕原画分开。3:1、4:1 及更长的图片或视频按原比例显示；图片可点击放大后横向拖动。像素和比例来自媒体本身。
 - 大屏视频建议导出可在手机直接播放的 H.264 MP4（音频可用 AAC）。本地编辑器支持单文件 90 MiB 以内。对很长或较大的视频，建议单独托管，用支持 HTTPS 和分段播放的 MP4/WebM 直链；普通分享页链接不等于视频文件地址。[GitHub 文件大小限制](https://docs.github.com/en/repositories/working-with-files/managing-large-files/about-large-files-on-github)
 - 示例图和视频仅用于看版式与播放器，来源与生成提示见 **素材与参考.md**。换完内容后，在管理页取消「概念样板」标记。
+
+交互参考：[Apple Vision Pro Guided Tour](https://www.apple.com/ca/apple-vision-pro/guided-tour/) 的章节化看片，以及 [Bang & Olufsen Beolab 90](https://www.bang-olufsen.com/en/ca/speakers/beolab-90) 的全画面展示和按需深入查看。

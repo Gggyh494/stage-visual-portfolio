@@ -130,6 +130,7 @@ async function verifyContent(value) {
     for (const [n, entry] of (project.gallery || []).entries()) {
       const mediaLabel = label + "的媒体 " + (n + 1);
       if (!isObject(entry) || !["image", "video"].includes(entry.type)) throw fail(422, mediaLabel + "类型无效。");
+      if (entry.showcase != null && (typeof entry.showcase !== "boolean" || (entry.showcase && entry.type !== "video"))) throw fail(422, mediaLabel + "只有视频可以加入展映区。");
       string(entry.label, mediaLabel + "名称", true, 70);
       for (const key of ["alt", "note", "credit", "creditUrl"]) string(entry[key], mediaLabel + "说明");
       if (entry.type === "image") await verifyMedia(entry.src, "image", mediaLabel, true);
@@ -144,7 +145,7 @@ async function verifyContent(value) {
 
 async function mediaFiles() {
   const out = [];
-  for (const directory of ["media", "media/uploads"]) {
+  for (const directory of ["media", "media/motion", "media/uploads"]) {
     const items = await readdir(join(site, directory), { withFileTypes: true }).catch((error) => {
       if (error.code === "ENOENT") return [];
       throw error;

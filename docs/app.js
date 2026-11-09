@@ -105,12 +105,14 @@
   }
   const featured = projectById.get(hero.featured) || projects[0];
   const showcase = featured ? [featured, ...projects.filter((p) => p !== featured)].slice(0, 3) : [];
+  let showcaseIndex = 0;
   const heroControls = $("hero-select");
   heroControls.hidden = showcase.length < 2;
   heroControls.innerHTML = showcase.map((project, i) => `
     <button class="hero-step mono" type="button" data-showcase="${i}" aria-label="预览：${esc(project.name)}" aria-pressed="false">${ordinal(i)}</button>`).join("");
 
   function renderShowcase(index) {
+    showcaseIndex = index;
     const project = showcase[index];
     const useCover = index === 0 && mediaUrl(hero.image);
     const image = useCover ? hero.image : project?.cover;
@@ -132,6 +134,26 @@
     }
   }
   renderShowcase(0);
+  const heroView = document.querySelector(".hero-visual");
+  let swipeOrigin;
+  heroView.addEventListener("pointerdown", (event) => {
+    if (event.pointerType === "touch") swipeOrigin = { x: event.clientX, y: event.clientY, id: event.pointerId };
+  }, { passive: true });
+  heroView.addEventListener("pointerup", (event) => {
+    const start = swipeOrigin;
+    swipeOrigin = undefined;
+    if (!start || start.id !== event.pointerId || showcase.length < 2) return;
+    const dx = event.clientX - start.x;
+    const dy = event.clientY - start.y;
+    if (Math.abs(dx) > 48 && Math.abs(dx) > Math.abs(dy) * 1.35) {
+      renderShowcase((showcaseIndex + (dx < 0 ? 1 : -1) + showcase.length) % showcase.length);
+    }
+  }, { passive: true });
+  heroView.addEventListener("pointercancel", () => { swipeOrigin = undefined; }, { passive: true });
+  const reduced = matchMedia("(prefers-reduced-motion: reduce)");
+  $("hero-image").addEventListener("load", () => {
+    if (!reduced.matches) $("hero-image").animate([{ opacity: .74, scale: ".997" }, { opacity: 1, scale: "1" }], { duration: 300, easing: "ease-out" });
+  });
   heroControls.addEventListener("click", (event) => {
     const button = event.target.closest("button[data-showcase]");
     if (button) renderShowcase(Number(button.dataset.showcase));
@@ -319,7 +341,7 @@
       document.title = studioTitle;
       if (prior) {
         caseView.replaceChildren();
-        const anchor = ["#work", "#services", "#contact", "#top", "#main"].includes(hash)
+        const anchor = ["#work", "#motion", "#services", "#contact", "#top", "#main"].includes(hash)
           ? $(hash.slice(1)) : null;
         requestAnimationFrame(() => {
           if (anchor) anchor.scrollIntoView({ block: "start", behavior: "instant" });
@@ -335,6 +357,7 @@
   }
   window.addEventListener("hashchange", () => route(true));
   route();
+  window.initStageShowroom?.({ projects, asset: mediaUrl, sourceOf, caseHref, frameText });
 
   const mediaDialog = $("media-dialog");
   const mediaBody = $("media-body");

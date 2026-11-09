@@ -149,6 +149,7 @@
             ${media(video ? "视频文件" : "原画图片", prefix + ".src", video ? "video" : "image", { required: !video })}
             ${video ? field("视频 HTTPS 直链（可选）", prefix + ".externalUrl", { wide: true, max: 2048 }) : field("图片说明", prefix + ".alt", { wide: true })}
             ${video ? media("视频封面（可选）", prefix + ".poster", "image") : ""}
+            ${video ? `<label class="check wide"><input name="${prefix}.showcase" type="checkbox"${item.showcase ? " checked" : ""}>同时展示在首页展映区</label>` : ""}
             ${field("展示备注", prefix + ".note", { wide: true })}
           </div>
         </article>`;
@@ -257,6 +258,7 @@
     if (busy) return;
     if (input.dataset.refresh) {
       assign(input.name, input.value);
+      if (input.name.endsWith(".type") && input.value !== "video") assign(input.name.slice(0, -4) + "showcase", false);
       changed();
       render();
       return;

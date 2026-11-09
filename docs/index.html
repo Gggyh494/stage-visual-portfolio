@@ -9,9 +9,11 @@
   <title>折光 · 舞台视觉作品集</title>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath fill='%23c9baff' d='M16 0c0 11 5 16 16 16-11 0-16 5-16 16 0-11-5-16-16-16C11 16 16 11 16 0Z'/%3E%3C/svg%3E">
   <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="showroom.css">
 </head>
 <body>
   <a class="skip" href="#main">跳到正文</a>
+  <div class="page-progress" aria-hidden="true"></div>
   <header class="site-head" id="top">
     <div class="shell header-inner">
       <a class="brand" href="#top" aria-label="返回首页">
@@ -23,6 +25,7 @@
       </a>
       <nav class="site-nav" aria-label="主导航">
         <a href="#work">作品</a>
+        <a href="#motion" id="motion-nav" hidden>展映</a>
         <a href="#services">服务</a>
       </nav>
       <a class="nav-contact" href="#contact">合作咨询 <span aria-hidden="true">↗</span></a>
@@ -63,9 +66,43 @@
         </div>
       </section>
 
+      <section class="shell content-section motion-section" id="motion" aria-labelledby="motion-title" hidden>
+        <div class="section-header" data-arrive>
+          <div><p class="mono eyebrow">01 / MOTION ROOM</p><h2 id="motion-title">舞台展映</h2></div>
+          <p>在同一个播放器里看巡演开场、发布会揭幕与沉浸式光场。每段按它自己的屏幕比例呈现。</p>
+        </div>
+        <div class="showroom" id="showroom" data-tone="live">
+          <div class="showroom-player">
+            <div class="showroom-top mono">
+              <span><i class="showroom-light" aria-hidden="true"></i> <span id="motion-number">CUE 01</span></span>
+              <span id="motion-format">原始画幅</span>
+            </div>
+            <div class="showroom-frame" id="motion-frame">
+              <img id="motion-poster" alt="" loading="lazy" decoding="async">
+              <video id="motion-video" preload="none" playsinline aria-label="舞台动态模板" hidden></video>
+              <button class="showroom-start" id="motion-start" type="button" aria-label="播放当前模板">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M8 4.5v15l12-7.5z"/></svg>
+              </button>
+            </div>
+            <div class="showroom-controls">
+              <button class="showroom-button" id="motion-play" type="button" aria-label="播放当前模板">播放</button>
+              <input id="motion-seek" type="range" min="0" max="1" step="0.01" value="0" aria-label="视频播放进度" disabled>
+              <span class="showroom-time mono" id="motion-time" aria-hidden="true">00:00</span>
+              <button class="showroom-button" id="motion-fullscreen" type="button" aria-label="全屏查看当前模板">全屏</button>
+            </div>
+            <div class="showroom-caption">
+              <p id="motion-caption"></p>
+              <a href="#work" id="motion-case">对应案例 <span aria-hidden="true">↗</span></a>
+            </div>
+            <p id="motion-message" class="showroom-message" role="status" hidden></p>
+          </div>
+          <div id="motion-cues" class="showroom-cues" role="group" aria-label="选择舞台视频模板"></div>
+        </div>
+      </section>
+
       <section class="shell content-section" id="work" aria-labelledby="work-title">
-        <div class="section-header">
-          <div><p class="mono eyebrow">01 / PROJECT INDEX</p><h2 id="work-title">项目索引</h2></div>
+        <div class="section-header" data-arrive>
+          <div><p class="mono eyebrow">02 / PROJECT INDEX</p><h2 id="work-title">项目索引</h2></div>
           <p id="work-intro">巡演、品牌发布会与沉浸式演出。</p>
         </div>
         <div class="work-toolbar">
@@ -76,8 +113,8 @@
       </section>
 
       <section class="shell content-section services" id="services" aria-labelledby="services-title">
-        <div class="section-header">
-          <div><p class="mono eyebrow">02 / CAPABILITIES</p><h2 id="services-title">我们能做</h2></div>
+        <div class="section-header" data-arrive>
+          <div><p class="mono eyebrow">03 / CAPABILITIES</p><h2 id="services-title">我们能做</h2></div>
           <p id="services-intro">从视觉创意、屏幕内容到现场预演。</p>
         </div>
         <ol id="services-list" class="services-list"></ol>
@@ -88,7 +125,7 @@
     <section class="shell contact" id="contact" aria-labelledby="contact-title">
       <div class="contact-inner">
         <div>
-          <p class="mono eyebrow">03 / PROJECT ENQUIRIES</p>
+          <p class="mono eyebrow">04 / PROJECT ENQUIRIES</p>
           <h2 id="contact-title">聊聊下一场</h2>
           <p id="contact-description">告诉我们活动时间、舞台类型和屏幕规格。<br>我们可以从一份清楚的需求开始聊。</p>
         </div>
@@ -141,6 +178,7 @@
   </dialog>
 
   <noscript><p class="shell noscript">请启用 JavaScript 以查看项目案例。</p></noscript>
+  <script src="showroom.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
