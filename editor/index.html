@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <meta name="color-scheme" content="dark">
+  <title>舞台作品管理</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="top">
+    <div class="identity"><span aria-hidden="true">✦</span><div><strong>作品管理</strong><small>STAGE PORTFOLIO / LOCAL EDITOR</small></div></div>
+    <div class="top-actions">
+      <a class="button neutral" href="/" target="_blank" rel="noopener">看作品集 ↗</a>
+      <button class="button primary" id="save" type="submit" form="edit-form" disabled>保存更改</button>
+    </div>
+  </header>
+  <div class="layout">
+    <aside class="sidebar" aria-label="选择编辑内容">
+      <div class="aside-title"><span>站点资料</span><span class="mono">SITE</span></div>
+      <button class="nav-row" type="button" data-view="site">工作室与首页</button>
+      <div class="aside-title projects-title"><span>项目</span><button id="add-project" class="small" type="button" data-action="add-project" disabled>＋ 新建</button></div>
+      <div id="project-nav"></div>
+    </aside>
+    <main class="panel">
+      <div class="status" id="status" role="status" aria-live="polite">正在读取作品数据…</div>
+      <form id="edit-form">
+        <fieldset id="editor-fields" disabled>
+          <legend class="sr-only">当前内容</legend>
+          <div id="editor"></div>
+        </fieldset>
+      </form>
+    </main>
+  </div>
+  <datalist id="media-files"></datalist>
+  <script src="app.js"></script>
+</body>
+</html>

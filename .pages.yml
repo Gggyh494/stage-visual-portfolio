@@ -1,0 +1,266 @@
+# Pages CMS configuration for this repository.
+media:
+  input: "docs/media"
+  output: "/media"
+  rename: "random"
+  extensions: ["jpg","jpeg","png","webp","gif","avif","mp4","webm"]
+content:
+  - name: "portfolio"
+    label: "舞台作品集"
+    type: "file"
+    path: "docs/portfolio.json"
+    format: "json"
+    fields:
+      - name: "studio"
+        label: "工作室"
+        type: "object"
+        required: true
+        fields:
+          - name: "name"
+            label: "工作室名称"
+            type: "string"
+            required: true
+          - name: "english"
+            label: "英文副标题"
+            type: "string"
+            required: true
+          - name: "email"
+            label: "合作邮箱"
+            type: "string"
+          - name: "demo"
+            label: "显示概念样板标记"
+            type: "boolean"
+      - name: "hero"
+        label: "首页"
+        type: "object"
+        required: true
+        fields:
+          - name: "title"
+            label: "首屏标题"
+            type: "string"
+            required: true
+          - name: "intro"
+            label: "首屏介绍"
+            type: "string"
+          - name: "caption"
+            label: "服务关键词"
+            type: "string"
+          - name: "featured"
+            label: "主推案例 ID"
+            type: "string"
+            description: "填写已有的项目 ID，留空用首个项目。"
+          - name: "image"
+            label: "首屏封面"
+            type: "image"
+            options:
+              extensions: ["jpg","jpeg","png","webp","gif","avif"]
+          - name: "alt"
+            label: "封面说明"
+            type: "string"
+          - name: "reel"
+            label: "首页片段"
+            type: "object"
+            fields:
+              - name: "src"
+                label: "上传 MP4 / WebM"
+                type: "file"
+                options:
+                  categories: ["video"]
+                  extensions: ["mp4","webm"]
+              - name: "externalUrl"
+                label: "视频 HTTPS 直链"
+                type: "string"
+                description: "大视频可用直链；有直链时优先播放直链。"
+              - name: "poster"
+                label: "视频封面"
+                type: "image"
+                options:
+                  extensions: ["jpg","jpeg","png","webp","gif","avif"]
+              - name: "title"
+                label: "显示标题"
+                type: "string"
+              - name: "note"
+                label: "片段说明"
+                type: "text"
+              - name: "credit"
+                label: "素材署名"
+                type: "string"
+              - name: "creditUrl"
+                label: "素材来源链接"
+                type: "string"
+      - name: "workIntro"
+        label: "项目索引介绍"
+        type: "text"
+      - name: "servicesIntro"
+        label: "服务介绍"
+        type: "text"
+      - name: "contactDescription"
+        label: "合作区说明"
+        type: "text"
+      - name: "categories"
+        label: "类别"
+        type: "object"
+        list:
+          min: 1
+          collapsible: true
+        fields:
+          - name: "id"
+            label: "类别 ID"
+            type: "string"
+            required: true
+          - name: "label"
+            label: "类别名称"
+            type: "string"
+            required: true
+      - name: "services"
+        label: "服务"
+        type: "object"
+        list:
+          collapsible: true
+        fields:
+          - name: "name"
+            label: "服务名称"
+            type: "string"
+            required: true
+          - name: "en"
+            label: "服务英文名称"
+            type: "string"
+          - name: "description"
+            label: "服务说明"
+            type: "text"
+      - name: "projects"
+        label: "项目"
+        type: "object"
+        list:
+          min: 1
+          collapsible: true
+        fields:
+          - name: "id"
+            label: "项目 ID"
+            type: "string"
+            required: true
+            description: "用唯一的小写字母、数字和连字符。发布后请保持 ID，已发出的案例链接依赖它。"
+          - name: "name"
+            label: "项目名称"
+            type: "string"
+            required: true
+          - name: "en"
+            label: "项目英文名"
+            type: "string"
+          - name: "category"
+            label: "类别 ID"
+            type: "string"
+            required: true
+            description: "填上方「类别」中的 ID，例如 live、launch 或 immersive。"
+          - name: "hook"
+            label: "一句话介绍"
+            type: "string"
+          - name: "occasion"
+            label: "使用场景"
+            type: "string"
+          - name: "scope"
+            label: "我们负责"
+            type: "string"
+          - name: "deliveries"
+            label: "交付内容"
+            type: "string"
+          - name: "brief"
+            label: "项目需求"
+            type: "text"
+          - name: "concept"
+            label: "视觉方向"
+            type: "text"
+          - name: "cover"
+            label: "项目全景"
+            type: "image"
+            options:
+              extensions: ["jpg","jpeg","png","webp","gif","avif"]
+            required: true
+          - name: "coverAlt"
+            label: "全景说明"
+            type: "string"
+          - name: "cardImage"
+            label: "索引图片"
+            type: "image"
+            options:
+              extensions: ["jpg","jpeg","png","webp","gif","avif"]
+          - name: "cardAlt"
+            label: "索引图片说明"
+            type: "string"
+          - name: "video"
+            label: "现场片段"
+            type: "object"
+            fields:
+              - name: "src"
+                label: "上传 MP4 / WebM"
+                type: "file"
+                options:
+                  categories: ["video"]
+                  extensions: ["mp4","webm"]
+              - name: "externalUrl"
+                label: "视频 HTTPS 直链"
+                type: "string"
+                description: "大视频可用直链；有直链时优先播放直链。"
+              - name: "poster"
+                label: "视频封面"
+                type: "image"
+                options:
+                  extensions: ["jpg","jpeg","png","webp","gif","avif"]
+              - name: "title"
+                label: "显示标题"
+                type: "string"
+              - name: "note"
+                label: "片段说明"
+                type: "text"
+              - name: "credit"
+                label: "素材署名"
+                type: "string"
+              - name: "creditUrl"
+                label: "素材来源链接"
+                type: "string"
+          - name: "gallery"
+            label: "大屏原画与预演"
+            type: "object"
+            list:
+              collapsible: true
+            fields:
+              - name: "label"
+                label: "媒体名称"
+                type: "string"
+                required: true
+              - name: "type"
+                label: "媒体类型"
+                type: "select"
+                required: true
+                options:
+                  values:
+                    - name: "image"
+                      label: "图片"
+                    - name: "video"
+                      label: "视频"
+              - name: "src"
+                label: "图片或视频"
+                type: "file"
+                options:
+                  categories: ["image","video"]
+                  extensions: ["jpg","jpeg","png","webp","gif","avif","mp4","webm"]
+              - name: "externalUrl"
+                label: "视频 HTTPS 直链"
+                type: "string"
+              - name: "poster"
+                label: "视频封面"
+                type: "image"
+                options:
+                  extensions: ["jpg","jpeg","png","webp","gif","avif"]
+              - name: "alt"
+                label: "图片说明"
+                type: "string"
+              - name: "note"
+                label: "展示备注"
+                type: "text"
+              - name: "credit"
+                label: "素材署名"
+                type: "string"
+              - name: "creditUrl"
+                label: "素材来源链接"
+                type: "string"

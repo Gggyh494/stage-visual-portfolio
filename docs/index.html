@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <meta name="description" content="折光舞台视觉。为巡演、发布会和沉浸式演出制作舞台 CG 与大屏内容。">
+  <meta name="theme-color" content="#0a0a0b">
+  <title>折光 · 舞台视觉作品集</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath fill='%23c9baff' d='M16 0c0 11 5 16 16 16-11 0-16 5-16 16 0-11-5-16-16-16C11 16 16 11 16 0Z'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip" href="#main">跳到正文</a>
+  <header class="site-head" id="top">
+    <div class="shell header-inner">
+      <a class="brand" href="#top" aria-label="返回首页">
+        <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true">
+          <path fill="currentColor" d="M16 0c0 11 5 16 16 16-11 0-16 5-16 16 0-11-5-16-16-16C11 16 16 11 16 0Z"/>
+          <path fill="#0a0a0b" d="M16 11c0 3.5 1.5 5 5 5-3.5 0-5 1.5-5 5 0-3.5-1.5-5-5-5 3.5 0 5-1.5 5-5Z"/>
+        </svg>
+        <span><strong id="brand-name">折光</strong><small id="brand-en">REFRACT / STAGE VISUALS</small></span>
+      </a>
+      <nav class="site-nav" aria-label="主导航">
+        <a href="#work">作品</a>
+        <a href="#services">服务</a>
+      </nav>
+      <a class="nav-contact" href="#contact">合作咨询 <span aria-hidden="true">↗</span></a>
+    </div>
+  </header>
+
+  <main id="main" tabindex="-1">
+    <p class="shell load-error" id="load-error" role="alert" hidden>作品数据暂时无法加载，请刷新后重试。</p>
+    <div id="home-view">
+      <section class="shell hero" aria-labelledby="hero-title">
+        <div class="hero-masthead">
+          <div>
+            <p class="mono hero-kicker"><i class="signal-dot" aria-hidden="true"></i> STAGE VISUALS / PORTFOLIO</p>
+            <h1 id="hero-title">舞台视觉与大屏内容</h1>
+          </div>
+          <div class="hero-intro">
+            <p id="hero-intro">巡演、品牌发布会与沉浸式演出</p>
+            <span id="hero-caption">现场影像 / 大屏原画 / 舞台预演</span>
+          </div>
+        </div>
+        <div class="hero-surface">
+          <div class="hero-visual"><img id="hero-image" fetchpriority="high" alt=""></div>
+          <span class="hero-stamp mono" id="hero-status">概念样板</span>
+        </div>
+        <div class="hero-foot">
+          <div class="hero-project" aria-live="polite">
+            <span class="mono" id="featured-index">01 / AFTERIMAGE</span>
+            <strong id="featured-name">余像现场</strong>
+          </div>
+          <div class="hero-select" id="hero-select" role="group" aria-label="切换精选项目"></div>
+          <div class="hero-actions">
+            <button class="reel-trigger" type="button" data-reel hidden>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 4.5v15l12-7.5z"/></svg>
+              <span id="reel-label">播放片段</span>
+            </button>
+            <a class="hero-case-link" id="featured-link" href="#work">查看案例 <span aria-hidden="true">↗</span></a>
+          </div>
+        </div>
+      </section>
+
+      <section class="shell content-section" id="work" aria-labelledby="work-title">
+        <div class="section-header">
+          <div><p class="mono eyebrow">01 / PROJECT INDEX</p><h2 id="work-title">项目索引</h2></div>
+          <p id="work-intro">巡演、品牌发布会与沉浸式演出。</p>
+        </div>
+        <div class="work-toolbar">
+          <div class="filters" role="group" aria-label="按项目类型筛选" id="filters"></div>
+          <span class="mono work-count" id="work-count" aria-live="polite"></span>
+        </div>
+        <div class="work-grid" id="work-grid"></div>
+      </section>
+
+      <section class="shell content-section services" id="services" aria-labelledby="services-title">
+        <div class="section-header">
+          <div><p class="mono eyebrow">02 / CAPABILITIES</p><h2 id="services-title">我们能做</h2></div>
+          <p id="services-intro">从视觉创意、屏幕内容到现场预演。</p>
+        </div>
+        <ol id="services-list" class="services-list"></ol>
+      </section>
+    </div>
+    <section id="case-view" class="shell case-view" aria-label="项目详情" hidden></section>
+
+    <section class="shell contact" id="contact" aria-labelledby="contact-title">
+      <div class="contact-inner">
+        <div>
+          <p class="mono eyebrow">03 / PROJECT ENQUIRIES</p>
+          <h2 id="contact-title">聊聊下一场</h2>
+          <p id="contact-description">告诉我们活动时间、舞台类型和屏幕规格。<br>我们可以从一份清楚的需求开始聊。</p>
+        </div>
+        <div class="contact-actions">
+          <button class="button button-primary" type="button" data-brief>整理合作需求 <span aria-hidden="true">↗</span></button>
+          <a class="contact-email" id="contact-email" hidden></a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="shell footer">
+    <span class="mono" id="footer-brand">REFRACT / STAGE VISUALS</span>
+    <span id="footer-note">示例图片与视频仅用于展示模板</span>
+    <a href="#top">返回顶部 <span aria-hidden="true">↑</span></a>
+  </footer>
+
+  <dialog id="media-dialog" aria-labelledby="media-title" class="media-dialog">
+    <div class="dialog-bar">
+      <h2 id="media-title">查看媒体</h2>
+      <div class="dialog-actions">
+        <button class="subtle-button" type="button" id="zoom-image" aria-pressed="false" hidden>原尺寸</button>
+        <button class="subtle-button" type="button" data-close="media-dialog" aria-label="关闭媒体">关闭 <span aria-hidden="true">×</span></button>
+      </div>
+    </div>
+    <div id="media-body" class="media-body"></div>
+    <p id="media-note" class="dialog-note" hidden></p>
+  </dialog>
+
+  <dialog id="brief-dialog" aria-labelledby="brief-title" class="brief-dialog">
+    <div class="dialog-bar">
+      <h2 id="brief-title">整理合作需求</h2>
+      <button class="subtle-button" type="button" data-close="brief-dialog" aria-label="关闭合作需求">关闭 <span aria-hidden="true">×</span></button>
+    </div>
+    <form id="brief-form" class="brief-form">
+      <div class="form-pair">
+        <label>项目类型<select name="kind" id="brief-kind" required></select></label>
+        <label>演出日期 <small>选填</small><input name="date" type="text" maxlength="60" placeholder="例如：2027 年 5 月"></label>
+      </div>
+      <label>屏幕规格 <small>选填</small><input name="screen" type="text" maxlength="150" placeholder="例如：主屏 7680 × 1920，左右各一块副屏"></label>
+      <label>需要制作什么？<textarea name="message" rows="4" maxlength="1800" placeholder="例如：开场片、三个曲目段落、主副屏同步内容" required></textarea></label>
+      <p class="brief-hint" id="brief-hint">需求只在本页整理，复制后可以自行发给团队。</p>
+      <div class="brief-actions">
+        <button class="button button-primary" type="submit" value="copy">复制需求</button>
+        <button class="button button-secondary" type="submit" value="email" id="brief-email" hidden>用邮件联系 ↗</button>
+      </div>
+      <p class="brief-status" id="brief-status" role="status" hidden></p>
+      <textarea id="manual-copy" rows="5" readonly aria-label="整理好的合作需求" hidden></textarea>
+    </form>
+  </dialog>
+
+  <noscript><p class="shell noscript">请启用 JavaScript 以查看项目案例。</p></noscript>
+  <script src="app.js"></script>
+</body>
+</html>

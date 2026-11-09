@@ -1,0 +1,153 @@
+{
+  "studio": {
+    "name": "折光",
+    "english": "REFRACT / STAGE VISUALS",
+    "email": "",
+    "demo": true
+  },
+  "hero": {
+    "title": "舞台视觉与大屏内容",
+    "image": "/media/afterimage-wide.webp",
+    "alt": "紫色束光下，超宽屏幕上的银色曲面横贯整座舞台",
+    "featured": "afterimage",
+    "caption": "现场影像 / 大屏原画 / 舞台预演",
+    "reel": {
+      "src": "/media/live-sample.mp4",
+      "poster": "/media/live-poster.webp",
+      "title": "现场影像示例",
+      "note": "现场素材用于演示播放器，与概念案例不是同一场演出。",
+      "credit": "Vung Nguyen / Pexels",
+      "creditUrl": "https://www.pexels.com/video/people-on-concert-13054630/"
+    },
+    "intro": "巡演、品牌发布会与沉浸式演出"
+  },
+  "workIntro": "按活动类型找案例。每个项目单独展示视觉方案和交付内容。",
+  "servicesIntro": "从第一帧视觉方案，到现场播放的最后一帧。",
+  "contactDescription": "如果已经有舞台图、屏幕尺寸或演出时间，可以一起发来。\n我们会从用途和交付范围开始聊。",
+  "categories": [
+    {
+      "id": "live",
+      "label": "巡演 / 音乐节"
+    },
+    {
+      "id": "launch",
+      "label": "发布会 / 盛典"
+    },
+    {
+      "id": "immersive",
+      "label": "沉浸式演出"
+    }
+  ],
+  "services": [
+    {
+      "name": "舞台视觉创意",
+      "en": "CREATIVE DIRECTION",
+      "description": "根据音乐、演出叙事和舞台布局，确立视觉主题、段落节奏与画面风格。"
+    },
+    {
+      "name": "CG 与大屏内容",
+      "en": "CGI & SCREEN CONTENT",
+      "description": "制作开场片、曲目视觉、循环和转场，适配超宽主屏、分屏及异形屏。"
+    },
+    {
+      "name": "预演与交付",
+      "en": "PREVIS & DELIVERY",
+      "description": "用舞台预演对齐画面与灯光，按屏幕尺寸和播放规范整理交付文件。"
+    }
+  ],
+  "projects": [
+    {
+      "id": "afterimage",
+      "category": "live",
+      "name": "余像现场",
+      "en": "AFTERIMAGE",
+      "cover": "/media/afterimage-wide.webp",
+      "coverAlt": "紫色灯光、烟雾与银色波形组成的音乐节主舞台概念图",
+      "hook": "为电子音乐演出的开场和曲目制作超宽屏幕视觉。",
+      "scope": "视觉创意 / CG 动画 / 主屏与副屏适配",
+      "occasion": "电子音乐演出 · 超宽主屏",
+      "deliveries": "开场片 / 曲目画面 / 无缝循环 / 分屏文件",
+      "brief": "电子音乐演出的概念案例。开场需要一眼建立舞台的视觉记忆，曲目间则要留出足够的空间给灯光与表演。",
+      "concept": "用银色曲面呈现声波。开场时曲面从屏幕两侧向中央汇聚，进入曲目后再沿着横向画幅舒展，配合低频的起落。",
+      "video": {
+        "src": "/media/live-sample.mp4",
+        "poster": "/media/live-poster.webp",
+        "title": "现场片段",
+        "note": "现场素材用于演示播放器，与本概念案例并非同一场演出。",
+        "credit": "Vung Nguyen / Pexels",
+        "creditUrl": "https://www.pexels.com/video/people-on-concert-13054630/"
+      },
+      "gallery": [
+        {
+          "type": "image",
+          "src": "/media/afterimage-led.webp",
+          "alt": "超宽黑紫底上横向展开的银色金属声波",
+          "label": "主屏原画",
+          "note": "超宽画幅 · 完整展示"
+        },
+        {
+          "type": "image",
+          "src": "/media/afterimage.webp",
+          "alt": "从观众席看向主屏、灯束及表演台",
+          "label": "全场预演",
+          "note": "观众视角 · 概念渲染"
+        }
+      ],
+      "cardImage": "/media/afterimage-led.webp",
+      "cardAlt": "在超宽主屏画幅中横向展开的银色声波"
+    },
+    {
+      "id": "liquid-form",
+      "category": "launch",
+      "name": "液态序曲",
+      "en": "LIQUID FORM",
+      "cover": "/media/launch.webp",
+      "coverAlt": "酒红色主屏与金属液体视觉组成的香氛发布会舞台",
+      "hook": "围绕香氛新品揭幕设计开场片、待机画面与主屏内容。",
+      "scope": "发布会视觉创意 / 开场 CG / 主屏内容",
+      "occasion": "新品发布会 · 舞台揭幕",
+      "deliveries": "开场画面 / 产品揭幕片段 / 待机画面",
+      "brief": "以香氛新品揭幕为场景的舞台概念。视觉既要建立产品质感，也要配合揭幕和主持人登场的节奏。",
+      "concept": "让酒红玻璃与液态金属贯穿整段开场。主屏先用材质特写铺垫，再在揭幕时给产品轮廓留出清晰的中心位置。",
+      "gallery": [
+        {
+          "type": "image",
+          "src": "/media/launch.webp",
+          "alt": "从观众席正面观看香氛发布会主屏的舞台效果",
+          "label": "全景预演",
+          "note": "观众视角 · 概念渲染"
+        },
+        {
+          "type": "image",
+          "src": "/media/liquid.webp",
+          "alt": "酒红玻璃香氛瓶与银色流体环绕的产品画面",
+          "label": "主屏关键画面",
+          "note": "产品登场 · 概念静帧"
+        }
+      ]
+    },
+    {
+      "id": "soft-signal",
+      "category": "immersive",
+      "name": "暗室回声",
+      "en": "SOFT SIGNAL",
+      "cover": "/media/signal-wide.webp",
+      "coverAlt": "暗色空间里一列透明斜面折射青色光线",
+      "hook": "让观众沿着动线看见层层展开的空间光影。",
+      "scope": "空间视觉创意 / 动态内容 / 观演预演",
+      "occasion": "沉浸式演出 · 环境视觉",
+      "deliveries": "空间预演图 / 循环画面 / 播放段落表",
+      "brief": "以观众走入表演空间为出发点的沉浸式概念。视觉需要兼顾近看时的细节，以及远处仍清楚可见的光线层次。",
+      "concept": "用连续透明斜面折射青色光线，让画面随观众的视角变化。动效留出停顿，给表演和空间本身足够的呼吸。",
+      "gallery": [
+        {
+          "type": "image",
+          "src": "/media/signal.webp",
+          "alt": "完整视角展示混凝土空间内的玻璃斜面和青色光雾",
+          "label": "空间预演",
+          "note": "观众动线 · 概念渲染"
+        }
+      ]
+    }
+  ]
+}
