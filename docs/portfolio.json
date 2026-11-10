@@ -10,11 +10,16 @@
     "image": "/media/afterimage-wide.webp",
     "alt": "紫色束光下，超宽屏幕上的银色曲面横贯整座舞台",
     "featured": "afterimage",
-    "loopVideo": "/media/live-sample.mp4",
+    "loopVideo": "/media/hero/refract-loop.mp4",
     "motion": {
-      "afterimage": "/media/motion/afterimage-clean.mp4",
-      "liquid-form": "/media/motion/liquid-form-clean.mp4",
-      "soft-signal": "/media/motion/soft-signal-clean.mp4"
+      "afterimage": "/media/hero/afterimage.mp4",
+      "liquid-form": "/media/hero/liquid-form.mp4",
+      "soft-signal": "/media/hero/soft-signal.mp4",
+      "ember-grid": "/media/hero/ember-grid.mp4",
+      "ice-arc": "/media/hero/ice-arc.mp4",
+      "porcelain-axis": "/media/hero/porcelain-axis.mp4",
+      "lime-beacon": "/media/hero/lime-beacon.mp4",
+      "coral-tide": "/media/hero/coral-tide.mp4"
     },
     "caption": "现场影像 / 大屏原画 / 舞台预演",
     "reel": {
@@ -25,7 +30,14 @@
       "credit": "Vung Nguyen / Pexels",
       "creditUrl": "https://www.pexels.com/video/people-on-concert-13054630/"
     },
-    "intro": "巡演、品牌发布会与沉浸式演出"
+    "intro": "巡演、品牌发布会与沉浸式演出",
+    "featuredProjects": [
+      "afterimage",
+      "ember-grid",
+      "ice-arc",
+      "porcelain-axis",
+      "coral-tide"
+    ]
   },
   "workIntro": "按活动类型找案例。每个项目单独展示视觉方案和交付内容。",
   "servicesIntro": "从第一帧视觉方案，到现场播放的最后一帧。",
@@ -89,14 +101,16 @@
           "src": "/media/afterimage-led.webp",
           "alt": "超宽黑紫底上横向展开的银色金属声波",
           "label": "主屏原画",
-          "note": "超宽画幅 · 完整展示"
+          "note": "超宽画幅 · 完整展示",
+          "aspect": "3:1"
         },
         {
           "type": "image",
           "src": "/media/afterimage.webp",
           "alt": "从观众席看向主屏、灯束及表演台",
           "label": "全场预演",
-          "note": "观众视角 · 概念渲染"
+          "note": "观众视角 · 概念渲染",
+          "aspect": "16:9"
         },
         {
           "type": "video",
@@ -108,7 +122,8 @@
         }
       ],
       "cardImage": "/media/afterimage-led.webp",
-      "cardAlt": "在超宽主屏画幅中横向展开的银色声波"
+      "cardAlt": "在超宽主屏画幅中横向展开的银色声波",
+      "coverAspect": "1672:630"
     },
     {
       "id": "liquid-form",
@@ -129,14 +144,16 @@
           "src": "/media/launch.webp",
           "alt": "从观众席正面观看香氛发布会主屏的舞台效果",
           "label": "全景预演",
-          "note": "观众视角 · 概念渲染"
+          "note": "观众视角 · 概念渲染",
+          "aspect": "2021:778"
         },
         {
           "type": "image",
           "src": "/media/liquid.webp",
           "alt": "酒红玻璃香氛瓶与银色流体环绕的产品画面",
           "label": "主屏关键画面",
-          "note": "产品登场 · 概念静帧"
+          "note": "产品登场 · 概念静帧",
+          "aspect": "4:3"
         },
         {
           "type": "video",
@@ -146,7 +163,8 @@
           "note": "暖铜光环由暗到明，托出产品轮廓。品牌发布会 · 4:1 · 7 秒。",
           "showcase": true
         }
-      ]
+      ],
+      "coverAspect": "2021:778"
     },
     {
       "id": "soft-signal",
@@ -167,7 +185,8 @@
           "src": "/media/signal.webp",
           "alt": "完整视角展示混凝土空间内的玻璃斜面和青色光雾",
           "label": "空间预演",
-          "note": "观众动线 · 概念渲染"
+          "note": "观众动线 · 概念渲染",
+          "aspect": "4:3"
         },
         {
           "type": "video",
@@ -177,7 +196,213 @@
           "note": "青色斜面和光雾依次亮起，表现空间的纵深。沉浸式演出 · 32:9 · 7 秒。",
           "showcase": true
         }
-      ]
+      ],
+      "coverAspect": "1448:556"
+    },
+    {
+      "id": "ember-grid",
+      "category": "live",
+      "name": "熔金脉阵",
+      "en": "EMBER GRID",
+      "cover": "/media/projects/ember-grid/stage.webp",
+      "coverAlt": "观众席视角的工业演出场馆，琥珀色铜片排布在超宽主屏，灯束掠过钢架",
+      "hook": "铜质光栅随着节拍成排点亮，把开场的重音延伸到整面屏。",
+      "scope": "开场视觉 / 主屏原画 / 灯光预演",
+      "occasion": "工业场馆巡演 · 主屏开场",
+      "deliveries": "舞台全景 / 3:1 主屏原画 / 片头与无字版",
+      "brief": "为一场假想的工业场馆巡演设计开场主屏。画面需要从观众席远处看清节奏，并为现场灯束留出暗场。",
+      "concept": "将铜质竖片排成类似管风琴的阵列，用琥珀色光带依次穿过缝隙。画面的层次来自各排铜片亮起的先后。",
+      "gallery": [
+        {
+          "type": "image",
+          "src": "/media/projects/ember-grid/led.webp",
+          "alt": "深色底上成排的发光铜片，金色波带横穿阵列",
+          "aspect": "3:1",
+          "label": "主屏原画",
+          "note": "3:1 · 完整画幅"
+        },
+        {
+          "type": "video",
+          "label": "熔金脉阵 · 标题版",
+          "src": "/media/projects/ember-grid/cue.mp4",
+          "poster": "/media/projects/ember-grid/led.webp",
+          "note": "3:1 · 7 秒 · 展映样片",
+          "showcase": true
+        },
+        {
+          "type": "video",
+          "label": "无字版",
+          "src": "/media/projects/ember-grid/cue-clean.mp4",
+          "poster": "/media/projects/ember-grid/led.webp",
+          "note": "3:1 · 7 秒 · 主屏播放"
+        }
+      ],
+      "cardImage": "/media/projects/ember-grid/led.webp",
+      "cardAlt": "深色底上成排的发光铜片，金色波带横穿阵列"
+    },
+    {
+      "id": "ice-arc",
+      "category": "live",
+      "name": "冰弧巡游",
+      "en": "ICE ARC",
+      "cover": "/media/projects/ice-arc/stage.webp",
+      "coverAlt": "体育馆观众席看到钴蓝色灯光、冰白环形主屏和中央舞台",
+      "hook": "冰白色弧线穿过钴蓝雾场，把视线引向舞台中心。",
+      "scope": "视觉设计 / 长屏动画 / 场馆预演",
+      "occasion": "室内体育馆巡演 · 横向主屏",
+      "deliveries": "舞台全景 / 32:9 主屏原画 / 片头与无字版",
+      "brief": "为一场假想的室内体育馆巡演设计舞台视觉。从看台到近台，观众都应能辨认蓝色空间里的主运动方向。",
+      "concept": "以冰白同心弧作主要形状，冷光从弧口滑过。长屏两端用平行划痕延展运动，让中央的轮廓读得清楚。",
+      "gallery": [
+        {
+          "type": "image",
+          "src": "/media/projects/ice-arc/led.webp",
+          "alt": "钴蓝色场域中横向延伸的冰白同心弧",
+          "aspect": "32:9",
+          "label": "主屏原画",
+          "note": "32:9 · 完整画幅"
+        },
+        {
+          "type": "video",
+          "label": "冰弧巡游 · 标题版",
+          "src": "/media/projects/ice-arc/cue.mp4",
+          "poster": "/media/projects/ice-arc/led.webp",
+          "note": "32:9 · 7 秒 · 展映样片",
+          "showcase": true
+        },
+        {
+          "type": "video",
+          "label": "无字版",
+          "src": "/media/projects/ice-arc/cue-clean.mp4",
+          "poster": "/media/projects/ice-arc/led.webp",
+          "note": "32:9 · 7 秒 · 主屏播放"
+        }
+      ],
+      "cardImage": "/media/projects/ice-arc/led.webp",
+      "cardAlt": "钴蓝色场域中横向延伸的冰白同心弧"
+    },
+    {
+      "id": "porcelain-axis",
+      "category": "launch",
+      "name": "白瓷轴线",
+      "en": "PORCELAIN AXIS",
+      "cover": "/media/projects/porcelain-axis/stage.webp",
+      "coverAlt": "观众视角的品牌发布舞台，象牙白主屏、石质台阶和中央产品台",
+      "hook": "象牙白瓷片沿一条金色细线展开，为揭幕留出静场。",
+      "scope": "材质设计 / 发布会预演 / 主屏图形",
+      "occasion": "品牌发布会 · 产品揭幕",
+      "deliveries": "舞台全景 / 4:1 主屏原画 / 片头与无字版",
+      "brief": "为一场假想的品牌揭幕设计主屏画面。要求在亮色环境里保留层次，产品台与大屏之间有清楚的视觉留白。",
+      "concept": "用层叠的白瓷薄片表现揭幕动作。光线先沿细缝移动，瓷片的投影逐层展开，最后停在对称的轴线上。",
+      "gallery": [
+        {
+          "type": "image",
+          "src": "/media/projects/porcelain-axis/led.webp",
+          "alt": "横向铺开的象牙白瓷片，有香槟色边缘和细腻的投影",
+          "aspect": "4:1",
+          "label": "主屏原画",
+          "note": "4:1 · 完整画幅"
+        },
+        {
+          "type": "video",
+          "label": "白瓷轴线 · 标题版",
+          "src": "/media/projects/porcelain-axis/cue.mp4",
+          "poster": "/media/projects/porcelain-axis/led.webp",
+          "note": "4:1 · 7 秒 · 展映样片",
+          "showcase": true
+        },
+        {
+          "type": "video",
+          "label": "无字版",
+          "src": "/media/projects/porcelain-axis/cue-clean.mp4",
+          "poster": "/media/projects/porcelain-axis/led.webp",
+          "note": "4:1 · 7 秒 · 主屏播放"
+        }
+      ],
+      "cardImage": "/media/projects/porcelain-axis/led.webp",
+      "cardAlt": "横向铺开的象牙白瓷片，有香槟色边缘和细腻的投影"
+    },
+    {
+      "id": "lime-beacon",
+      "category": "launch",
+      "name": "荧柠信标",
+      "en": "LIME BEACON",
+      "cover": "/media/projects/lime-beacon/stage.webp",
+      "coverAlt": "石墨色发布舞台和低矮灯架，超宽主屏显示荧绿色信标，前景为观众",
+      "hook": "荧绿光点从细线中聚成圆环，给产品登场一个清晰的信号。",
+      "scope": "图形设计 / 动态预演 / 大屏内容",
+      "occasion": "科技产品发布 · 大屏动效",
+      "deliveries": "舞台全景 / 3:1 主屏原画 / 片头与无字版",
+      "brief": "为一场假想的科技产品发布会设计开幕信号。亮点要在石墨黑的现场保持清晰，同时给现场主持和设备演示留出空间。",
+      "concept": "把荧绿点阵沿水平方向排列，再依次聚集成环。细线和光点交替运动，在重音时让环形信标出现。",
+      "gallery": [
+        {
+          "type": "image",
+          "src": "/media/projects/lime-beacon/led.webp",
+          "alt": "黑底上荧绿点阵聚集成环，两侧延伸出横向扫描细线",
+          "aspect": "3:1",
+          "label": "主屏原画",
+          "note": "3:1 · 完整画幅"
+        },
+        {
+          "type": "video",
+          "label": "荧柠信标 · 标题版",
+          "src": "/media/projects/lime-beacon/cue.mp4",
+          "poster": "/media/projects/lime-beacon/led.webp",
+          "note": "3:1 · 7 秒 · 展映样片",
+          "showcase": true
+        },
+        {
+          "type": "video",
+          "label": "无字版",
+          "src": "/media/projects/lime-beacon/cue-clean.mp4",
+          "poster": "/media/projects/lime-beacon/led.webp",
+          "note": "3:1 · 7 秒 · 主屏播放"
+        }
+      ],
+      "cardImage": "/media/projects/lime-beacon/led.webp",
+      "cardAlt": "黑底上荧绿点阵聚集成环，两侧延伸出横向扫描细线"
+    },
+    {
+      "id": "coral-tide",
+      "category": "immersive",
+      "name": "珊瑚引力",
+      "en": "CORAL TIDE",
+      "cover": "/media/projects/coral-tide/stage.webp",
+      "coverAlt": "观众视角的沉浸场馆，有珊瑚色悬挂薄膜、宽幅投影与地面的反射",
+      "hook": "珊瑚色薄膜缓慢起伏，把主屏和观众所在的空间连在一起。",
+      "scope": "空间视觉 / 动画原画 / 投影预演",
+      "occasion": "沉浸式演出 · 空间投影",
+      "deliveries": "空间全景 / 32:9 原画 / 片头与无字版",
+      "brief": "为一场假想的沉浸演出制作长屏视觉。观众从不同方向进入，画面需要不依赖单一正视角，也能读出前后关系。",
+      "concept": "将几层暖色半透薄膜错开运动。轮廓与反射时而叠合，观众走动时仍能辨认各层的位置。",
+      "gallery": [
+        {
+          "type": "image",
+          "src": "/media/projects/coral-tide/led.webp",
+          "alt": "珊瑚和杏橙色半透薄膜沿横向层叠展开",
+          "aspect": "32:9",
+          "label": "主屏原画",
+          "note": "32:9 · 完整画幅"
+        },
+        {
+          "type": "video",
+          "label": "珊瑚引力 · 标题版",
+          "src": "/media/projects/coral-tide/cue.mp4",
+          "poster": "/media/projects/coral-tide/led.webp",
+          "note": "32:9 · 7 秒 · 展映样片",
+          "showcase": true
+        },
+        {
+          "type": "video",
+          "label": "无字版",
+          "src": "/media/projects/coral-tide/cue-clean.mp4",
+          "poster": "/media/projects/coral-tide/led.webp",
+          "note": "32:9 · 7 秒 · 主屏播放"
+        }
+      ],
+      "cardImage": "/media/projects/coral-tide/led.webp",
+      "cardAlt": "珊瑚和杏橙色半透薄膜沿横向层叠展开"
     }
   ]
 }

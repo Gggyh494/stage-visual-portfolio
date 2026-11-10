@@ -10,9 +10,9 @@ const exec = promisify(execFile);
 
 export function mediaSlots(model) {
   const slots = [];
-  const add = (id, label, kind, target, key) => {
-    const src = kind === "video" ? (target.externalUrl || target[key]) : target[key];
-    slots.push({ id, label, kind, target, key, src: src || "" });
+  const add = (id, label, kind, target, key, heroMotion = false) => {
+    const src = kind === "video" && key === "src" && !heroMotion ? (target.externalUrl || target[key]) : target?.[key];
+    slots.push({ id, label, kind, target, key, heroMotion, src: src || "" });
   };
   const video = (id, label, target) => {
     if (!target) return;
@@ -20,10 +20,12 @@ export function mediaSlots(model) {
     add(id + "-poster", label + "封面", "image", target, "poster");
   };
   add("hero-image", "首页 · 首屏图", "image", model.hero, "image");
+  add("hero-loop", "首页 · 首屏默认循环视频", "video", model.hero, "loopVideo");
   video("hero-reel", "首页 · 现场片段", model.hero.reel);
   for (const project of model.projects) {
     const id = project.id;
     const name = project.name;
+    add(id + ":hero-motion", name + " · 首屏循环视频", "video", model.hero.motion, id, true);
     add(id + ":cover", name + " · 项目封面", "image", project, "cover");
     add(id + ":card", name + " · 列表图", "image", project, "cardImage");
     video(id + ":video", name + " · 现场片段", project.video);

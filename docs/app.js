@@ -8,15 +8,6 @@
   };
   const data = window.PORTFOLIO || await load();
   const embedded = window.PORTFOLIO_MEDIA || {};
-  const dimensions = {
-    "media/afterimage-wide.webp": [1672, 630],
-    "media/afterimage.webp": [1672, 941],
-    "media/afterimage-led.webp": [2172, 724],
-    "media/launch.webp": [2021, 778],
-    "media/liquid.webp": [1448, 1086],
-    "media/signal-wide.webp": [1448, 556],
-    "media/signal.webp": [1448, 1086],
-  };
   const $ = (id) => document.getElementById(id);
   const esc = (value) => String(value ?? "").replace(/[&<>"']/g, (c) => ({
     "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;",
@@ -58,13 +49,8 @@
     } catch { return ""; }
   }
 
-  function imgAttributes(path) {
-    const size = dimensions[mediaPath(path)];
-    return size ? ` width="${Number(size[0])}" height="${Number(size[1])}"` : "";
-  }
-
   function imageTag(path, alt, eager = false) {
-    return `<img src="${esc(mediaUrl(path))}" alt="${esc(alt)}"${imgAttributes(path)}${eager ? ' fetchpriority="high"' : ' loading="lazy" decoding="async"'}>`;
+    return `<img src="${esc(mediaUrl(path))}" alt="${esc(alt)}"${eager ? ' fetchpriority="high"' : ' loading="lazy" decoding="async"'}>`;
   }
 
   const sourceOf = (item) => item?.externalUrl || item?.src;
@@ -100,7 +86,9 @@
   document.querySelector('meta[name="description"]').content = studio.name + "。 " + hero.caption + "。 " + data.workIntro;
   document.querySelector("[data-reel]").hidden = !mediaUrl(sourceOf(hero.reel));
   const featured = projectById.get(hero.featured) || projects[0];
-  const showcase = featured ? [featured, ...projects.filter((p) => p !== featured)].slice(0, 3) : [];
+  const curated = Array.isArray(hero.featuredProjects) ? hero.featuredProjects.map((id) => projectById.get(id)) : [];
+  const shortlist = [...new Set([featured, ...curated].filter(Boolean))];
+  const showcase = shortlist.length >= 3 ? shortlist.slice(0, 5) : [...new Set([...shortlist, ...projects])].slice(0, 3);
   let showcaseIndex = -1;
   let projectPreview = false;
   const heroProjects = $("hero-projects");
@@ -131,6 +119,7 @@
   const usesVideoFrames = typeof heroVideo.requestVideoFrameCallback === "function";
   const clampUnit = (value) => Math.max(0, Math.min(1, value));
   let heroClip = "";
+  let seamlessClip = false;
   let motionChoice;
   let playBlocked = false;
   let heroInView = !("IntersectionObserver" in window);
@@ -213,9 +202,13 @@
     attempt.then(() => {
       if (playAttempt !== attempt) return;
       playAttempt = null;
-      paintVideoEdge(heroVideo.currentTime);
+      if (seamlessClip) {
+        heroVideo.style.opacity = "1";
+      } else {
+        paintVideoEdge(heroVideo.currentTime);
+        queueVideoFrame();
+      }
       heroVideoLayer.classList.add("is-visible");
-      queueVideoFrame();
     }).catch(() => {
       if (playAttempt !== attempt) return;
       playAttempt = null;
@@ -274,9 +267,6 @@
       }
     }
     heroImage.alt = alt;
-    heroImage.removeAttribute("width");
-    heroImage.removeAttribute("height");
-    if (dimensions[mediaPath(path)]) [heroImage.width, heroImage.height] = dimensions[mediaPath(path)];
     if (url) heroImage.src = url;
     else heroImage.removeAttribute("src");
     heroImage.hidden = !url;
@@ -299,8 +289,11 @@
     const image = useCover ? hero.image : project?.cover;
     const alt = (useCover ? hero.alt || project?.coverAlt : project?.coverAlt) || "";
     const revision = ++selectionRevision;
-    const projectClip = mediaUrl(hero.motion?.[project?.id]);
-    heroClip = preview ? projectClip : (mediaUrl(hero.loopVideo) || projectClip);
+    const projectClip = hero.motion?.[project?.id];
+    const clip = preview || !mediaUrl(hero.loopVideo) ? projectClip : hero.loopVideo;
+    heroClip = mediaUrl(clip);
+    // The packaged hero clips return to the same camera and light phase on each loop.
+    seamlessClip = mediaPath(clip).startsWith("media/hero/");
     if (motionChoice === true && !autoMotion()) motionChoice = undefined;
     playBlocked = false;
     posterBusy = true;
@@ -503,8 +496,10 @@
       button.setAttribute("aria-pressed", String(Number(button.dataset.caseMedia) === index));
     }
     const isVideo = item.type === "video";
+    const ratio = typeof item.aspect === "string" && /^[1-9]\d{0,3}:[1-9]\d{0,3}$/.test(item.aspect)
+      ? item.aspect.replace(":", " / ") : "16 / 9";
     const content = isVideo ? videoTag(item)
-      : `<button class="figure-button" type="button" data-media="${index}" aria-label="放大查看：${esc(item.label)}">${imageTag(item.src, item.alt, true)}</button>`;
+      : `<button class="figure-button" style="aspect-ratio: ${ratio}" type="button" data-media="${index}" aria-label="放大查看：${esc(item.label)}">${imageTag(item.src, item.alt, true)}</button>`;
     pane.innerHTML = `<figure class="full-media">${content}
       <figcaption>
         <span><strong>${esc(item.label)}</strong>${item.note ? " · " + esc(item.note) : ""}${item.credit ? " · " + creditTag(item) : ""}</span>
@@ -520,7 +515,7 @@
     const next = projects.length > 1 ? projects[(i + 1) % projects.length] : null;
     const video = project.video;
     caseMedia = [
-      { type: "image", src: project.cover, alt: project.coverAlt, label: "项目全景", note: studio.demo ? "概念渲染" : "" },
+      { type: "image", src: project.cover, alt: project.coverAlt, aspect: project.coverAspect, label: "项目全景", note: studio.demo ? "概念渲染" : "" },
       ...(mediaUrl(sourceOf(video)) ? [{ ...video, type: "video", label: video.title || "现场片段" }] : []),
       ...(project.gallery || []).filter((item) => mediaUrl(item.type === "video" ? sourceOf(item) : item.src)),
     ].filter((item) => mediaUrl(item.type === "video" ? sourceOf(item) : item.src));
@@ -602,8 +597,17 @@
     }
   }
   window.addEventListener("hashchange", () => route(true));
-  route();
   window.initStageShowroom?.({ projects, asset: mediaUrl, sourceOf, caseHref, frameText });
+  route();
+  // The browser can restore the initial scroll after the asynchronously rendered sections are laid out.
+  const initialHash = location.hash;
+  if (initialHash === "#work" || initialHash === "#services") {
+    const restoreAnchor = () => requestAnimationFrame(() => {
+      if (location.hash === initialHash && !activeProject && scrollY === 0) route();
+    });
+    if (document.readyState === "complete") restoreAnchor();
+    else window.addEventListener("pageshow", restoreAnchor, { once: true });
+  }
 
   const mediaDialog = $("media-dialog");
   const mediaBody = $("media-body");

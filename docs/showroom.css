@@ -79,7 +79,7 @@
 .showroom-caption > a { color: var(--cue); white-space: nowrap; }
 .showroom-caption > a:hover { text-decoration: underline; text-underline-offset: 3px; }
 .showroom-message { color: var(--cue); padding: 0 12px 10px; font-size: 12px; }
-.showroom-cues { display: grid; align-content: start; min-width: 0; }
+.showroom-cues { display: grid; align-content: start; min-width: 0; max-height: min(66vh, 520px); overflow-y: auto; }
 .showroom-cue {
   min-width: 0;
   min-height: clamp(84px, 9vw, 122px);
@@ -112,7 +112,9 @@
   .showroom { grid-template-columns: minmax(0,1fr); gap: 10px; }
   .showroom-cues {
     display: flex;
+    max-height: none;
     overflow-x: auto;
+    overflow-y: hidden;
     overscroll-behavior-inline: contain;
     scroll-snap-type: x proximity;
     gap: 6px;

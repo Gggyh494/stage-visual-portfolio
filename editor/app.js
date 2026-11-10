@@ -115,7 +115,8 @@
         ${field("首屏介绍", "hero.intro")}
         ${field("首屏服务关键词", "hero.caption")}
         ${field("主推项目", "hero.featured", { choices: projects })}
-        ${media("首屏封面（可选）", "hero.image", "image", { hint: "留空则使用主推项目的封面；建议选用超宽图。" })}
+        ${media("首屏封面（可选）", "hero.image", "image", { hint: "留空则使用主推项目的封面；建议选用 16:9 全景。" })}
+        ${media("首屏默认循环视频（可选）", "hero.loopVideo", "video", { hint: "建议使用 16:9 无声 MP4。留空则使用主推项目的循环视频。" })}
         ${field("首屏封面说明", "hero.alt", { wide: true })}
         ${field("作品索引介绍", "workIntro", { wide: true, area: true })}
         ${field("服务介绍", "servicesIntro", { wide: true, area: true })}
@@ -183,6 +184,7 @@
         ${field("项目全景说明", base + ".coverAlt", { wide: true })}
         ${media("索引图片（可选）", base + ".cardImage", "image", { hint: "留空使用项目全景。可选大屏原画，便于一眼看清项目区别。" })}
         ${field("索引图片说明", base + ".cardAlt", { wide: true })}
+        ${media("项目首屏循环视频（可选）", "hero.motion." + project.id, "video", { hint: "切换到此精选项目时播放。建议使用 16:9 无声 MP4。" })}
       </div></section>
       <section class="group"><h2>现场片段</h2>${videoFields(base + ".video")}</section>
       ${renderGallery(project, base)}`;
@@ -212,6 +214,10 @@
     if (name === "remove-project" && list.length > 1) {
       list.splice(active, 1);
       if (model.hero.featured === project.id) model.hero.featured = list[0].id;
+      if (model.hero.motion) delete model.hero.motion[project.id];
+      if (Array.isArray(model.hero.featuredProjects)) {
+        model.hero.featuredProjects = model.hero.featuredProjects.filter((id) => id !== project.id);
+      }
       active = Math.min(active, list.length - 1);
       return true;
     }
@@ -274,7 +280,9 @@
         method: "POST", headers: { "x-stage-editor": token }, body: file,
       });
       assign(path, output.path);
-      if (input.dataset.kind === "video" && path.endsWith(".src")) assign(path.slice(0, -3) + "externalUrl", "");
+      if (input.dataset.kind === "video" && path.endsWith(".src") && !path.startsWith("hero.motion.")) {
+        assign(path.slice(0, -3) + "externalUrl", "");
+      }
       files.push(output.path);
       dirty = true;
       status("素材已上传到本机。保存更改后，作品页才会使用它。", "success");

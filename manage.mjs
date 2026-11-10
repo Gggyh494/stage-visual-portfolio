@@ -87,6 +87,16 @@ async function verifyVideo(value, label) {
   for (const key of ["title", "note", "credit", "creditUrl"]) string(value[key], label + "的说明");
 }
 
+async function verifyHeroMotion(hero, ids) {
+  await verifyMedia(hero.loopVideo, "video", "首屏默认循环视频");
+  if (hero.motion === undefined) return;
+  if (!isObject(hero.motion)) throw fail(422, "首屏项目循环视频格式有误。");
+  for (const [id, source] of Object.entries(hero.motion)) {
+    if (!ids.has(id)) throw fail(422, "首屏循环视频关联的项目不存在：" + id);
+    await verifyMedia(source, "video", "首屏项目循环视频（" + id + "）");
+  }
+}
+
 async function verifyContent(value) {
   if (!isObject(value) || !isObject(value.studio) || !isObject(value.hero) ||
     !Array.isArray(value.projects) || !Array.isArray(value.categories) || !Array.isArray(value.services)) {
@@ -145,19 +155,23 @@ async function verifyContent(value) {
     }
   }
   if (hero.featured && !ids.has(hero.featured)) throw fail(422, "首页主推项目不存在。");
+  await verifyHeroMotion(hero, ids);
 }
 
 async function mediaFiles() {
   const out = [];
-  for (const directory of ["media", "media/motion", "media/uploads"]) {
+  const directories = ["media"];
+  for (const directory of directories) {
     const items = await readdir(join(site, directory), { withFileTypes: true }).catch((error) => {
       if (error.code === "ENOENT") return [];
       throw error;
     });
     for (const item of items) {
-      if (item.isFile() && (imageExts.has(extname(item.name).toLowerCase()) || videoExts.has(extname(item.name).toLowerCase()))) {
-        out.push(directory + "/" + item.name);
-      }
+      if (item.name.startsWith(".")) continue;
+      const path = directory + "/" + item.name;
+      const extension = extname(item.name).toLowerCase();
+      if (item.isDirectory()) directories.push(path);
+      else if (item.isFile() && (imageExts.has(extension) || videoExts.has(extension))) out.push(path);
     }
   }
   return out.sort();
@@ -284,8 +298,11 @@ async function replaceOnGitHub(req, res, url) {
     const slot = mediaSlots(model).find(({ id }) => id === url.searchParams.get("slot"));
     if (!slot) throw fail(422, "请选择作品集里的素材位置。");
     asset = await storeUpload(req, url.searchParams.get("name") || "", slot.kind);
-    slot.target[slot.key] = asset;
-    if (slot.kind === "video") delete slot.target.externalUrl;
+    if (slot.heroMotion && !isObject(model.hero.motion ?? {})) throw fail(422, "首屏项目循环视频格式有误。");
+    const target = slot.heroMotion ? (model.hero.motion ??= {}) : slot.target;
+    target[slot.key] = asset;
+    if (slot.kind === "video" && slot.key === "src" && !slot.heroMotion) delete target.externalUrl;
+    await verifyHeroMotion(model.hero, new Set(model.projects.map(({ id }) => id)));
     await writeFile(temporary, JSON.stringify(model, null, 2) + "\n", { flag: "wx" });
     await rename(temporary, contentPath);
     const commit = await github.publish(asset);
