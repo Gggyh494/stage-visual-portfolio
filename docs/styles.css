@@ -202,22 +202,39 @@ main:focus, h1:focus { outline: none; }
 .section-header > p { color: var(--muted); max-width: 420px; text-wrap: pretty; padding-bottom: 4px; }
 .work-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; border-top: 1px solid var(--line); padding: 14px 0 18px; }
 .filters { display: flex; flex-wrap: wrap; gap: 7px; }
-.filter { border: 1px solid var(--line); background: transparent; border-radius: 2px; padding: 6px 12px; min-height: 36px; color: var(--muted); font-size: 13px; }
+.filter { border: 1px solid var(--line); background: transparent; border-radius: 2px; padding: 6px 12px; min-height: 36px; color: var(--muted); font-size: 13px; transition: color .14s, border-color .14s, background-color .14s; }
 .filter:hover { color: var(--ink); border-color: #76707e; }
 .filter[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--bg); }
 .work-count { color: var(--muted); white-space: nowrap; }
 .work-grid { border-top: 1px solid var(--line); }
 .work-card { min-width: 0; border-bottom: 1px solid var(--line); }
 .card-link { display: grid; grid-template-columns: minmax(27px,.13fr) minmax(0,1fr) minmax(0,1.37fr) auto; align-items: center; gap: clamp(10px,2.2vw,38px); padding-block: clamp(16px,2.45vw,35px); }
-.card-image { position: relative; aspect-ratio: 3 / 1; background: #100e16; border: 1px solid #2a2531; min-width: 0; }
-.card-image img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; transition: filter .22s; }
-.card-link:hover img { filter: brightness(1.13); }
+.card-link:is(:focus-visible, :active) { --card-highlight: var(--accent); --card-arrow-ink: #14101b; }
+.card-image { position: relative; aspect-ratio: 3 / 1; background: #100e16; border: 1px solid var(--card-highlight, #2a2531); min-width: 0; overflow: hidden; transition: border-color .18s; }
+.card-image img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
 .card-index { align-self: start; margin-top: 7px; color: var(--accent); }
 .card-caption h3 { font-size: clamp(24px, 3.4vw, 50px); letter-spacing: -.06em; font-weight: 650; line-height: 1.12; }
 .card-caption .mono { color: var(--accent); margin-bottom: 7px; }
 .card-description { font-size: 14px; color: var(--muted); margin-top: 7px; text-wrap: pretty; }
-.card-arrow { display: grid; place-items: center; border: 1px solid #504a5b; border-radius: 50%; width: 40px; aspect-ratio: 1; font-size: 17px; line-height: 1; transition: color .22s, background-color .22s; }
-.card-link:hover .card-arrow { color: #14101b; background: var(--accent); border-color: var(--accent); }
+.card-arrow { display: grid; place-items: center; border: 1px solid var(--card-highlight, #504a5b); border-radius: 50%; width: 40px; aspect-ratio: 1; font-size: 17px; line-height: 1; color: var(--card-arrow-ink, inherit); background: var(--card-highlight, transparent); transition: transform .18s, color .18s, background-color .18s, border-color .18s; }
+@media (hover: hover) and (pointer: fine) {
+  .card-link:hover { --card-highlight: var(--accent); --card-arrow-ink: #14101b; }
+}
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .card-link:is(:hover, :focus-visible) .card-image::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(108deg, transparent 38%, #e6deff26 50%, transparent 62%);
+    animation: card-light .42s ease-out both;
+  }
+  .card-link:is(:hover, :focus-visible) .card-arrow { transform: translate(2px, -2px); }
+}
+@keyframes card-light {
+  from { transform: translateX(-85%); }
+  to { transform: translateX(85%); }
+}
 
 /* Services and enquiries */
 .services-list { list-style: none; margin: 0; padding: 0; }
@@ -258,6 +275,13 @@ main:focus, h1:focus { outline: none; }
 .case-tab[aria-pressed="true"] { border-bottom-color: var(--accent); background: #cbbdff14; color: var(--ink); }
 .case-tab .mono { color: var(--accent); }
 .media-pane { margin-top: 11px; }
+@media (prefers-reduced-motion: no-preference) {
+  .case-heading, #case-media-pane .full-media { animation: case-arrival .2s ease-out; }
+}
+@keyframes case-arrival {
+  from { opacity: .82; transform: translateY(3px); }
+  to { opacity: 1; transform: translateY(0); }
+}
 .case-facts { margin: 0; display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 14px 30px; padding: 20px 0; border-bottom: 1px solid var(--line); }
 .case-facts dt { font-size: 12px; color: var(--accent); margin-bottom: 5px; }
 .case-facts dd { margin: 0; }

@@ -412,11 +412,13 @@
   }
 
   let filter = "";
+  let filterTransition;
+  const workGrid = $("work-grid");
   const filterItems = [{ id: "", label: "全部" }, ...categories];
   $("filters").innerHTML = filterItems.map((item) => `
     <button class="filter" type="button" data-filter="${esc(item.id)}" aria-pressed="${item.id === filter}">${esc(item.label)}</button>`).join("");
-  $("work-grid").innerHTML = projects.map((project, index) => `
-    <article class="work-card" data-category="${esc(project.category)}">
+  workGrid.innerHTML = projects.map((project, index) => `
+    <article class="work-card" data-category="${esc(project.category)}" data-arrive>
       <a class="card-link" href="${esc(caseHref(project))}" aria-label="查看项目：${esc(project.name)}">
         <span class="mono card-index" aria-hidden="true">${ordinal(index)}</span>
         <div class="card-caption">
@@ -434,7 +436,7 @@
       button.setAttribute("aria-pressed", String(button.dataset.filter === filter));
     }
     let count = 0;
-    for (const card of $("work-grid").children) {
+    for (const card of workGrid.children) {
       card.hidden = !!filter && card.dataset.category !== filter;
       if (!card.hidden) count++;
     }
@@ -443,9 +445,15 @@
   renderFilter();
   $("filters").addEventListener("click", (event) => {
     const button = event.target.closest("button[data-filter]");
-    if (button) {
-      filter = button.dataset.filter;
-      renderFilter();
+    if (!button || button.dataset.filter === filter) return;
+    filter = button.dataset.filter;
+    renderFilter();
+    filterTransition?.cancel();
+    if (autoMotion()) {
+      filterTransition = workGrid.animate?.([{ opacity: .82 }, { opacity: 1 }], {
+        duration: compactProjects.matches ? 140 : 190,
+        easing: "ease-out",
+      });
     }
   });
 

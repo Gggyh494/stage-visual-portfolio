@@ -14,9 +14,13 @@
 .hero-visual { overflow: hidden; touch-action: pan-y; }
 #motion { scroll-margin-top: 27px; }
 .motion-section { position: relative; }
-[data-arrive].has-arrived { animation: chapter-arrival .56s cubic-bezier(.2,.75,.2,1) both; }
+[data-arrive].has-arrived { animation: chapter-arrival var(--arrival-duration, .56s) cubic-bezier(.2,.75,.2,1); }
+.work-card[data-arrive] { --arrival-duration: .24s; --arrival-opacity: .85; --arrival-offset: 6px; }
+@media (hover: none), (pointer: coarse) {
+  .work-card[data-arrive].has-arrived { animation: none; }
+}
 @keyframes chapter-arrival {
-  from { opacity: .65; transform: translateY(12px); }
+  from { opacity: var(--arrival-opacity, .65); transform: translateY(var(--arrival-offset, 12px)); }
   to { opacity: 1; transform: translateY(0); }
 }
 .showroom {
@@ -104,10 +108,6 @@
 .cue-copy > strong { font-size: clamp(17px, 1.9vw, 28px); line-height: 1.18; letter-spacing: -.035em; }
 .cue-copy > small { color: var(--muted); font-size: 12px; }
 .cue-arrow { font-size: 14px; }
-@media (hover: hover) {
-  .card-link:hover .card-arrow { translate: 0 -2px; }
-  .card-arrow { transition: translate .22s, color .22s, background-color .22s; }
-}
 @media (max-width: 760px) {
   .showroom { grid-template-columns: minmax(0,1fr); gap: 10px; }
   .showroom-cues {
