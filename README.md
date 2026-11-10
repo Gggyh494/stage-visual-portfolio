@@ -18,11 +18,13 @@
 
 普通 GitHub Pages 网站可在互联网上访问；即使仓库是私有的，也不能据此判断作品页是私有的。免费个人账号通常使用公开仓库，私有仓库的 Pages 可用性取决于账号方案。发布前替换示例内容，确认正式素材适合公开展示。见 [GitHub Pages 官方说明](https://docs.github.com/en/pages/getting-started-with-github-pages/creating-a-github-pages-site)。
 
-## 线上编辑素材
+## 更换线上素材
 
-从 [线上管理入口](https://gggyh494.github.io/stage-visual-portfolio/admin/) 登录 GitHub，用「素材库」上传文件，用「编辑项目」替换 JSON 里的媒体地址。GitHub Pages 会在 `main` 更新后自动重新发布。可在本机管理页完成更换再提交；带 `showcase: true` 的视频同时进入首页「舞台展映」。
+1. 在已通过 Git 登录 GitHub 的电脑上，解压仓库并双击 **start-github-admin.cmd**。也可运行 `node manage.mjs --github`，打开终端显示的本机地址。需要 Node.js 22 或更新版本及 Git。
+2. 选首页或某个案例里的素材位置，选择图片、MP4 或 WebM，预览后点「上传并发布」。工具会在一次提交中放入新文件并更新所选位置。每个文件最多 90 MiB。
+3. 提交成功后可查看提交记录。GitHub Pages 部署完成后，新素材会出现在作品集上。若别人先更新了仓库，点「刷新素材列表」后重新选文件。
 
-Pages CMS 的字段定义保留在 `.pages.yml`，当前使用 GitHub 登录管理。
+发布工具只在本机监听，使用电脑已有的 GitHub 凭据，目标固定为 `Gggyh494/stage-visual-portfolio` 的 `main`。打开 [管理入口](https://gggyh494.github.io/stage-visual-portfolio/admin/) 可下载工具。也可在 GitHub 素材目录上传同名、同格式文件进行替换，网页单文件上限为 25 MiB。
 
 ## 舞台展映
 

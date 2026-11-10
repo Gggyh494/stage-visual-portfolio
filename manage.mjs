@@ -1,4 +1,5 @@
 import { createServer } from "node:http";
+import { execFile } from "node:child_process";
 import { createReadStream, createWriteStream } from "node:fs";
 import { mkdir, open, readFile, readdir, rename, rm, stat, writeFile } from "node:fs/promises";
 import { createHash, randomBytes, randomUUID } from "node:crypto";
@@ -6,15 +7,18 @@ import { extname, join, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 import { Transform } from "node:stream";
 import { pipeline } from "node:stream/promises";
+import { mediaSlots, openGitHubWorkspace, repository } from "./github-editor.mjs";
 
 const root = fileURLToPath(new URL(".", import.meta.url));
-const site = join(root, "docs");
-const editor = join(root, "editor");
-const contentPath = join(site, "portfolio.json");
-const temp = join(root, ".editor-tmp");
-const uploads = join(site, "media", "uploads");
 const port = Number(process.env.STAGE_EDITOR_PORT || 8788);
 if (!Number.isInteger(port) || port < 1024 || port > 65535) throw new Error("Invalid editor port");
+const github = process.argv.includes("--github") ? await openGitHubWorkspace(root) : null;
+const workspace = github?.dir || root;
+const site = join(workspace, "docs");
+const editor = join(root, "editor");
+const contentPath = join(site, "portfolio.json");
+const temp = join(workspace, ".editor-tmp");
+const uploads = join(site, "media", "uploads");
 const host = "127.0.0.1:" + port;
 const origin = "http://" + host;
 const projectMount = "/portfolio-preview/";
@@ -210,10 +214,11 @@ function matchesSignature(bytes, extension) {
   return false;
 }
 
-async function upload(req, res, url) {
-  const name = url.searchParams.get("name") || "";
+async function storeUpload(req, name, kind) {
   const extension = extname(name).toLowerCase();
   if (!imageExts.has(extension) && !videoExts.has(extension)) throw fail(415, "请选择常见图片、MP4 或 WebM。");
+  if (kind === "image" && !imageExts.has(extension)) throw fail(415, "这个位置需要图片。");
+  if (kind === "video" && !videoExts.has(extension)) throw fail(415, "这个位置需要 MP4 或 WebM 视频。");
   const length = Number(req.headers["content-length"]);
   if (!Number.isSafeInteger(length) || length < 1) throw fail(411, "请选择有效的本地文件。");
   if (length > uploadLimit) throw fail(413, "单个文件请控制在 90 MB 以内。长视频可用 HTTPS 直链。");
@@ -238,8 +243,63 @@ async function upload(req, res, url) {
       if (!matchesSignature(buffer.subarray(0, bytesRead), extension)) throw fail(415, "文件内容和扩展名不匹配。");
     } finally { await file.close(); }
     await rename(temporary, join(uploads, finalName));
-    send(res, 201, { path: "media/uploads/" + finalName });
+    return "media/uploads/" + finalName;
   } finally { await rm(temporary, { force: true }); }
+}
+
+function previewSource(src) {
+  if (typeof src !== "string" || !src) return "";
+  const url = URL.parse(src);
+  if (url) return url.protocol === "https:" && !url.username && !url.password ? url.href : "";
+  const path = src.replace(/^\/?(?:docs\/)?media\//, "media/");
+  const parts = path.split("/");
+  if (parts[0] !== "media" || parts.length < 2 || parts.some((part) => !part || part.startsWith("."))) return "";
+  return "/_editor/" + parts.map(encodeURIComponent).join("/");
+}
+
+async function githubState(res) {
+  if (saving) throw fail(409, "素材正在发布，请稍后刷新。");
+  saving = true;
+  try {
+    const revision = await github.refresh();
+    const model = JSON.parse(await readFile(contentPath, "utf8"));
+    const slots = mediaSlots(model).map(({ id, kind, label, src }) => ({ id, kind, label, src: previewSource(src) }));
+    send(res, 200, { token: nonce, revision, slots, uploadLimit });
+  } finally { saving = false; }
+}
+
+async function replaceOnGitHub(req, res, url) {
+  if (saving) throw fail(409, "有素材正在更新，请稍后重试。");
+  const expected = url.searchParams.get("revision");
+  if (!/^[a-f0-9]{40}$/.test(expected || "")) throw fail(409, "请先刷新素材列表。");
+  saving = true;
+  const temporary = join(temp, randomUUID() + ".json");
+  let base;
+  let asset;
+  let published = false;
+  try {
+    base = await github.refresh();
+    if (base !== expected) throw fail(409, "线上已有新版本。请刷新素材列表，再选择要替换的位置。");
+    const model = JSON.parse(await readFile(contentPath, "utf8"));
+    const slot = mediaSlots(model).find(({ id }) => id === url.searchParams.get("slot"));
+    if (!slot) throw fail(422, "请选择作品集里的素材位置。");
+    asset = await storeUpload(req, url.searchParams.get("name") || "", slot.kind);
+    slot.target[slot.key] = asset;
+    if (slot.kind === "video") delete slot.target.externalUrl;
+    await writeFile(temporary, JSON.stringify(model, null, 2) + "\n", { flag: "wx" });
+    await rename(temporary, contentPath);
+    const commit = await github.publish(asset);
+    published = true;
+    send(res, 201, { revision: commit, src: previewSource(asset), commitUrl: "https://github.com/" + repository + "/commit/" + commit });
+  } finally {
+    try {
+      if (asset && !published) {
+        await github.restore(base);
+        await rm(join(site, asset), { force: true });
+      }
+      await rm(temporary, { force: true });
+    } finally { saving = false; }
+  }
 }
 
 async function serve(req, res, dir, relative, privatePage = false) {
@@ -250,7 +310,7 @@ async function serve(req, res, dir, relative, privatePage = false) {
   const info = type ? await stat(file, { throwIfNoEntry: false }) : null;
   if (!info?.isFile()) throw fail(404, "找不到页面。");
   const output = { ...headers, "Content-Type": type, "Accept-Ranges": "bytes" };
-  if (privatePage) output["Content-Security-Policy"] = "default-src 'self'; img-src 'self' https: data:; style-src 'self'; script-src 'self'; form-action 'none'; frame-ancestors 'none'";
+  if (privatePage) output["Content-Security-Policy"] = "default-src 'self'; img-src 'self' https: data: blob:; media-src 'self' https: blob:; style-src 'self'; script-src 'self'; form-action 'none'; frame-ancestors 'none'";
   const range = /^bytes=(\d+)-(\d*)$/.exec(req.headers.range || "");
   let options;
   if (range) {
@@ -279,14 +339,28 @@ const server = createServer(async (req, res) => {
     const path = decodeURIComponent(url.pathname);
     if (path.startsWith("/_editor/api/")) {
       if (req.headers["sec-fetch-site"] === "cross-site" || (req.headers.origin && req.headers.origin !== origin)) throw fail(403, "来源不允许。");
-      if (req.method === "GET" && path === "/_editor/api/state") return await getState(res);
+      if (req.method === "GET") {
+        if (github && path === "/_editor/api/github") return await githubState(res);
+        if (!github && path === "/_editor/api/state") return await getState(res);
+      }
       if (req.method !== "POST") throw fail(405, "请求方式不支持。");
       if (req.headers.origin !== origin || req.headers["x-stage-editor"] !== nonce) throw fail(403, "编辑会话已失效，请刷新管理页。");
-      if (path === "/_editor/api/save") return await save(req, res);
-      if (path === "/_editor/api/upload") return await upload(req, res, url);
+      if (github && path === "/_editor/api/replace") return await replaceOnGitHub(req, res, url);
+      if (!github && path === "/_editor/api/save") return await save(req, res);
+      if (!github && path === "/_editor/api/upload") return send(res, 201, { path: await storeUpload(req, url.searchParams.get("name") || "") });
       throw fail(404, "找不到操作。");
     }
     if (!["GET", "HEAD"].includes(req.method)) throw fail(405, "请求方式不支持。");
+    if (github) {
+      if (path === "/") { res.writeHead(302, { ...headers, Location: "/_editor/" }).end(); return; }
+      if (path === "/_editor/") return await serve(req, res, editor, "github.html", true);
+      if (["/_editor/github.js", "/_editor/github.css", "/_editor/styles.css"].includes(path)) return await serve(req, res, editor, path.slice(9), true);
+      const extension = extname(path).toLowerCase();
+      if (path.startsWith("/_editor/media/") && (imageExts.has(extension) || videoExts.has(extension))) {
+        return await serve(req, res, site, path.slice(9), true);
+      }
+      throw fail(404, "找不到页面。");
+    }
     if (path === "/_editor/") return await serve(req, res, editor, "index.html", true);
     if (path === "/_editor/app.js" || path === "/_editor/styles.css") return await serve(req, res, editor, path.slice(9), true);
     const publicPath = path.startsWith(projectMount) ? path.slice(projectMount.length) : path.slice(1);
@@ -299,6 +373,20 @@ const server = createServer(async (req, res) => {
   }
 });
 server.listen(port, "127.0.0.1", () => {
-  console.log("作品集预览: " + origin + "/");
+  if (github) console.log("GitHub 发布目标 " + repository + " / main");
+  else console.log("作品集预览: " + origin + "/");
   console.log("本机素材管理: " + origin + "/_editor/");
+  if (github && process.platform === "win32" && process.argv.includes("--open")) {
+    execFile("rundll32.exe", ["url.dll,FileProtocolHandler", origin + "/_editor/"], { windowsHide: true }, () => {});
+  }
 });
+if (github) {
+  for (const signal of ["SIGINT", "SIGTERM"]) {
+    process.once(signal, () => server.close(() => { void github.close(); }));
+  }
+  server.once("error", (error) => {
+    console.error(error.code === "EADDRINUSE" ? "管理端口已被占用，请打开 " + origin + "/_editor/ 或关闭占用端口的程序。" : error.message);
+    process.exitCode = 1;
+    void github.close();
+  });
+}

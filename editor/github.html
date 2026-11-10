@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <meta name="color-scheme" content="dark">
+  <title>舞台作品集 · 更换素材</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="github.css">
+</head>
+<body>
+  <header class="top">
+    <div class="identity"><span aria-hidden="true">✦</span><div><strong>作品集管理</strong><small>REFRACT / MEDIA DESK</small></div></div>
+    <a class="button neutral" href="https://gggyh494.github.io/stage-visual-portfolio/" target="_blank" rel="noopener">查看网站 ↗</a>
+  </header>
+  <main class="publish-layout">
+    <div class="page-heading">
+      <div>
+        <p class="mono">Gggyh494 / stage-visual-portfolio</p>
+        <h1>更换图片或视频</h1>
+        <p>选一个位置，预览新素材，再发布到网站。</p>
+      </div>
+      <button class="button neutral" type="button" id="reload">刷新素材列表</button>
+    </div>
+    <form id="replacement">
+      <fieldset class="group" id="controls" disabled>
+        <legend class="sr-only">素材更换</legend>
+        <label class="field" for="slot"><span>要更换的位置</span><select id="slot" required></select></label>
+        <div class="grid media-pair">
+          <div class="media-pane"><h2>当前素材</h2><div class="media-preview" id="current-preview"></div></div>
+          <div class="media-pane"><h2>新素材</h2><div class="media-preview" id="new-preview"><p>选择文件后预览</p></div></div>
+        </div>
+        <label class="field" for="file"><span>选择新文件</span><input type="file" id="file" required aria-describedby="file-hint"></label>
+        <p class="hint" id="file-hint"></p>
+        <div class="sub-actions publish-actions">
+          <button class="button primary" type="submit" id="publish" disabled>上传并发布</button>
+          <a class="button neutral" id="commit" target="_blank" rel="noopener" hidden>查看提交 ↗</a>
+        </div>
+      </fieldset>
+    </form>
+    <p class="status" id="status" role="status" aria-live="polite">正在读取线上素材…</p>
+    <p class="hint">使用本机已有的 GitHub 登录。提交后，GitHub Pages 会更新网站。</p>
+  </main>
+  <script src="github.js"></script>
+</body>
+</html>
