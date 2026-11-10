@@ -10,6 +10,7 @@
     "image": "/media/afterimage-wide.webp",
     "alt": "紫色束光下，超宽屏幕上的银色曲面横贯整座舞台",
     "featured": "afterimage",
+    "loopVideo": "/media/live-sample.mp4",
     "motion": {
       "afterimage": "/media/motion/afterimage-clean.mp4",
       "liquid-form": "/media/motion/liquid-form-clean.mp4",

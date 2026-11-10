@@ -11,10 +11,10 @@
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="showroom.css">
 </head>
-<body>
+<body id="top">
   <a class="skip" href="#main">跳到正文</a>
   <div class="page-progress" aria-hidden="true"></div>
-  <header class="site-head" id="top">
+  <header class="site-head" id="site-head" data-over-hero>
     <div class="shell header-inner">
       <a class="brand" href="#top" aria-label="返回首页">
         <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true">
@@ -35,28 +35,18 @@
   <main id="main" tabindex="-1">
     <p class="shell load-error" id="load-error" role="alert" hidden>作品数据暂时无法加载，请刷新后重试。</p>
     <div id="home-view">
-      <section class="shell hero" aria-labelledby="hero-title">
-        <div class="hero-masthead">
-          <div>
-            <p class="mono hero-kicker"><i class="signal-dot" aria-hidden="true"></i> STAGE VISUALS / PORTFOLIO</p>
-            <h1 id="hero-title">舞台视觉与大屏内容</h1>
-          </div>
-          <div class="hero-intro">
-            <p id="hero-intro">巡演、品牌发布会与沉浸式演出</p>
-            <span id="hero-caption">现场影像 / 大屏原画 / 舞台预演</span>
-          </div>
-        </div>
-        <div class="hero-surface">
-          <div class="hero-visual">
-            <div class="hero-stage">
-              <img id="hero-image" fetchpriority="high" alt="">
-              <img id="hero-next-image" alt="" aria-hidden="true" hidden>
-              <div class="hero-video-layer" aria-hidden="true">
-                <video id="hero-video" muted loop playsinline preload="none" disablepictureinpicture tabindex="-1"></video>
-              </div>
+      <section class="hero" aria-labelledby="hero-wordmark">
+        <div class="hero-visual">
+          <div class="hero-stage">
+            <img id="hero-image" fetchpriority="high" alt="">
+            <img id="hero-next-image" alt="" aria-hidden="true" hidden>
+            <div class="hero-video-layer" aria-hidden="true">
+              <video id="hero-video" muted loop playsinline preload="none" disablepictureinpicture tabindex="-1"></video>
             </div>
-            <div class="hero-glow" aria-hidden="true"></div>
           </div>
+          <div class="hero-glow" aria-hidden="true"></div>
+        </div>
+        <div class="hero-utility">
           <span class="hero-stamp mono" id="hero-status">概念样板</span>
           <button class="hero-motion-toggle" id="hero-motion-toggle" type="button" aria-label="播放首屏动效" title="播放首屏动效" hidden>
             <svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" fill="currentColor">
@@ -65,18 +55,25 @@
             </svg>
           </button>
         </div>
-        <div class="hero-foot">
-          <div class="hero-project" aria-live="polite">
-            <span class="mono" id="featured-index">01 / AFTERIMAGE</span>
-            <strong id="featured-name">余像现场</strong>
+        <button class="hero-reel" type="button" data-reel hidden>
+          <span class="hero-reel-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 4.5v15l12-7.5z"/></svg>
+          </span>
+          <span>播放片段</span>
+        </button>
+        <div class="hero-overlay">
+          <div class="hero-signature">
+            <h1 id="hero-wordmark">折光</h1>
+            <p id="hero-title">舞台视觉与大屏内容</p>
           </div>
-          <div class="hero-select" id="hero-select" role="group" aria-label="切换精选项目"></div>
-          <div class="hero-actions">
-            <button class="reel-trigger" type="button" data-reel hidden>
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 4.5v15l12-7.5z"/></svg>
-              <span id="reel-label">播放片段</span>
-            </button>
-            <a class="hero-case-link" id="featured-link" href="#work">查看案例 <span aria-hidden="true">↗</span></a>
+          <div class="hero-projects" id="hero-projects" hidden>
+            <div class="hero-project-picker">
+              <button class="hero-project-skip" type="button" data-hero-skip="-1" aria-label="上一个精选项目">‹</button>
+              <nav class="hero-select" id="hero-select" aria-label="精选项目"></nav>
+              <button class="hero-project-skip" type="button" data-hero-skip="1" aria-label="下一个精选项目">›</button>
+            </div>
+            <p class="hero-swipe-hint" id="hero-swipe-hint">左右滑动切换</p>
+            <span class="sr-only" id="hero-project-status" aria-live="polite"></span>
           </div>
         </div>
       </section>

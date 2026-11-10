@@ -89,9 +89,8 @@
   put("brand-name", studio.name);
   put("brand-en", studio.english);
   put("footer-brand", studio.english);
+  put("hero-wordmark", studio.name);
   put("hero-title", hero.title);
-  put("hero-intro", hero.intro);
-  put("hero-caption", hero.caption);
   put("work-intro", data.workIntro);
   put("services-intro", data.servicesIntro);
   put("contact-description", data.contactDescription);
@@ -99,19 +98,23 @@
   $("footer-note").hidden = !studio.demo;
   document.title = studioTitle;
   document.querySelector('meta[name="description"]').content = studio.name + "。 " + hero.caption + "。 " + data.workIntro;
-  if (mediaUrl(sourceOf(hero.reel))) {
-    document.querySelector("[data-reel]").hidden = false;
-    put("reel-label", studio.demo ? "现场片段" : "播放 Showreel");
-  }
+  document.querySelector("[data-reel]").hidden = !mediaUrl(sourceOf(hero.reel));
   const featured = projectById.get(hero.featured) || projects[0];
   const showcase = featured ? [featured, ...projects.filter((p) => p !== featured)].slice(0, 3) : [];
   let showcaseIndex = -1;
+  let projectPreview = false;
+  const heroProjects = $("hero-projects");
   const heroControls = $("hero-select");
-  heroControls.hidden = showcase.length < 2;
+  heroProjects.hidden = !showcase.length;
   heroControls.innerHTML = showcase.map((project, i) => `
-    <button class="hero-step mono" type="button" data-showcase="${i}" aria-label="预览：${esc(project.name)}" aria-pressed="false">${ordinal(i)}</button>`).join("");
+    <a class="hero-project-link" href="${esc(caseHref(project))}" data-showcase="${i}">${esc(project.name)} <span aria-hidden="true">↗</span></a>`).join("");
+  const heroLinks = Array.from(heroControls.querySelectorAll("a"));
+  for (const button of heroProjects.querySelectorAll("[data-hero-skip]")) button.hidden = showcase.length < 2;
+  $("hero-swipe-hint").hidden = showcase.length < 2;
 
   const heroView = document.querySelector(".hero-visual");
+  const homeView = $("home-view");
+  const siteHead = $("site-head");
   const heroImage = $("hero-image");
   const nextHeroImage = $("hero-next-image");
   const heroVideo = $("hero-video");
@@ -119,10 +122,10 @@
   const motionToggle = $("hero-motion-toggle");
   const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
   const reducedData = matchMedia("(prefers-reduced-data: reduce)");
-  const compactHero = matchMedia("(max-width: 690px), (pointer: coarse)");
-  const mouseHover = matchMedia("(hover: hover) and (pointer: fine)");
+  const compactProjects = matchMedia("(max-width: 690px), (hover: none) and (pointer: coarse)");
+  const mouseHover = matchMedia("(any-hover: hover) and (any-pointer: fine)");
   const connection = navigator.connection;
-  const autoMotion = () => !reducedMotion.matches && !reducedData.matches && !compactHero.matches && !connection?.saveData;
+  const autoMotion = () => !reducedMotion.matches && !reducedData.matches && !connection?.saveData;
   const decorateHero = () => autoMotion() && motionChoice !== false && !playBlocked;
   const heroMotionEnabled = () => Boolean(heroClip && (motionChoice ?? autoMotion()) && !playBlocked);
   const usesVideoFrames = typeof heroVideo.requestVideoFrameCallback === "function";
@@ -137,7 +140,20 @@
   let playAttempt;
   let videoFrame = null;
   let pointerFrame = 0;
+  let headerFrame = 0;
   heroVideo.muted = true;
+
+  function syncHeroHeader() {
+    siteHead.toggleAttribute("data-over-hero", !homeView.hidden && heroView.getBoundingClientRect().bottom > siteHead.offsetHeight);
+  }
+  window.addEventListener("scroll", () => {
+    if (headerFrame) return;
+    headerFrame = requestAnimationFrame(() => {
+      headerFrame = 0;
+      syncHeroHeader();
+    });
+  }, { passive: true });
+  window.addEventListener("resize", syncHeroHeader, { passive: true });
 
   function paintVideoEdge(time) {
     const duration = heroVideo.duration;
@@ -181,7 +197,7 @@
     motionToggle.setAttribute("aria-label", label);
     motionToggle.title = label;
     if (!decorateHero() || !mouseHover.matches) resetHeroPointer();
-    if (!enabled || posterBusy || !heroInView || document.hidden || $("home-view").hidden) {
+    if (!enabled || posterBusy || !heroInView || document.hidden || homeView.hidden || $("media-dialog").open) {
       playAttempt = null;
       heroVideo.pause();
       hideHeroVideo();
@@ -235,7 +251,7 @@
       heroVideo.load();
     }
   }
-  for (const query of [reducedMotion, reducedData, compactHero]) query.addEventListener?.("change", updateMotionPreference);
+  for (const query of [reducedMotion, reducedData]) query.addEventListener?.("change", updateMotionPreference);
   mouseHover.addEventListener?.("change", resetHeroPointer);
   connection?.addEventListener?.("change", updateMotionPreference);
 
@@ -250,7 +266,9 @@
       if (revision !== selectionRevision) return;
       if (ready && decorateHero()) {
         nextHeroImage.hidden = false;
-        posterFade = nextHeroImage.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 230, easing: "ease-out", fill: "both" });
+        posterFade = nextHeroImage.animate([{ opacity: 0 }, { opacity: 1 }], {
+          duration: compactProjects.matches ? 160 : 220, easing: "ease-out", fill: "both",
+        });
         await posterFade.finished.catch(() => {});
         if (revision !== selectionRevision) return;
       }
@@ -272,33 +290,83 @@
     posterFade = null;
   }
 
-  function renderShowcase(index) {
-    if (index === showcaseIndex) return;
+  function renderShowcase(index, preview = true) {
+    if (index === showcaseIndex && preview === projectPreview) return;
     showcaseIndex = index;
+    projectPreview = preview;
     const project = showcase[index];
     const useCover = index === 0 && mediaUrl(hero.image);
     const image = useCover ? hero.image : project?.cover;
     const alt = (useCover ? hero.alt || project?.coverAlt : project?.coverAlt) || "";
     const revision = ++selectionRevision;
-    heroClip = mediaUrl(hero.motion?.[project?.id]);
+    const projectClip = mediaUrl(hero.motion?.[project?.id]);
+    heroClip = preview ? projectClip : (mediaUrl(hero.loopVideo) || projectClip);
     if (motionChoice === true && !autoMotion()) motionChoice = undefined;
     playBlocked = false;
     posterBusy = true;
     syncHeroMotion();
-    swapHeroPoster(image, alt, revision).then(() => {
+    const clipFade = (heroVideoLayer.getAnimations?.() || []).map((animation) => animation.finished.catch(() => {}));
+    Promise.all([swapHeroPoster(image, alt, revision), ...clipFade]).then(() => {
       if (revision !== selectionRevision) return;
       posterBusy = false;
       syncHeroMotion();
     });
-    $("featured-link").hidden = !project;
-    if (project) $("featured-link").href = caseHref(project);
-    put("featured-name", project?.name);
-    put("featured-index", project ? ordinal(projects.indexOf(project)) + " / " + project.en : "");
-    for (const button of heroControls.querySelectorAll("button")) {
-      button.setAttribute("aria-pressed", String(Number(button.dataset.showcase) === index));
+    for (const [position, link] of heroLinks.entries()) {
+      if (position === index) link.setAttribute("aria-current", "true");
+      else link.removeAttribute("aria-current");
     }
   }
-  renderShowcase(0);
+  renderShowcase(0, false);
+
+  function stepShowcase(direction) {
+    if (showcase.length < 2) return;
+    const next = (showcaseIndex + direction + showcase.length) % showcase.length;
+    renderShowcase(next);
+    put("hero-project-status", showcase[next].name);
+  }
+  const projectControl = (node) => node?.closest?.("[data-hero-skip], [data-showcase]");
+  let projectTap;
+  let handledTap;
+  heroProjects.addEventListener("pointerdown", (event) => {
+    const control = projectControl(event.target);
+    if (control && event.pointerType === "touch") {
+      projectTap = { control, id: event.pointerId, x: event.clientX, y: event.clientY, at: event.timeStamp };
+    }
+  }, { passive: true });
+  heroProjects.addEventListener("pointercancel", () => { projectTap = undefined; });
+  heroProjects.addEventListener("pointerup", (event) => {
+    const start = projectTap;
+    projectTap = undefined;
+    if (!start || start.id !== event.pointerId || event.timeStamp - start.at > 550 ||
+        Math.hypot(event.clientX - start.x, event.clientY - start.y) > 10 ||
+        projectControl(document.elementFromPoint(event.clientX, event.clientY)) !== start.control) return;
+    // A browser can suppress the first click after a swipe. Keep short taps usable.
+    handledTap = { control: start.control, at: event.timeStamp };
+    start.control.click();
+  }, { passive: true });
+  heroProjects.addEventListener("click", (event) => {
+    const control = projectControl(event.target);
+    const fromTouch = event.pointerType === "touch" || (!event.pointerType && event.detail > 0);
+    if (handledTap && control === handledTap.control && event.isTrusted && fromTouch && event.timeStamp - handledTap.at < 600) {
+      event.preventDefault();
+      return;
+    }
+    if (control?.hasAttribute("data-hero-skip")) stepShowcase(Number(control.dataset.heroSkip));
+  });
+  let hoverPreview;
+  const cancelHoverPreview = () => clearTimeout(hoverPreview);
+  for (const [index, link] of heroLinks.entries()) {
+    link.addEventListener("pointerenter", (event) => {
+      if (event.pointerType !== "mouse" || !mouseHover.matches || compactProjects.matches) return;
+      cancelHoverPreview();
+      hoverPreview = setTimeout(() => renderShowcase(index), 75);
+    });
+    link.addEventListener("pointerleave", cancelHoverPreview);
+    link.addEventListener("focus", () => {
+      cancelHoverPreview();
+      if (!compactProjects.matches || link.matches(":focus-visible")) renderShowcase(index);
+    });
+  }
   let swipeOrigin;
   heroView.addEventListener("pointerdown", (event) => {
     if (event.pointerType === "touch") swipeOrigin = { x: event.clientX, y: event.clientY, id: event.pointerId };
@@ -310,7 +378,7 @@
     const dx = event.clientX - start.x;
     const dy = event.clientY - start.y;
     if (Math.abs(dx) > 48 && Math.abs(dx) > Math.abs(dy) * 1.35) {
-      renderShowcase((showcaseIndex + (dx < 0 ? 1 : -1) + showcase.length) % showcase.length);
+      stepShowcase(dx < 0 ? 1 : -1);
     }
   }, { passive: true });
   heroView.addEventListener("pointercancel", () => { swipeOrigin = undefined; }, { passive: true });
@@ -323,18 +391,14 @@
       if (!box.width || !box.height) return;
       const x = clampUnit((event.clientX - box.left) / box.width);
       const y = clampUnit((event.clientY - box.top) / box.height);
-      heroView.style.setProperty("--hero-shift-x", ((x * 2 - 1) * Math.min(4, box.width * .005)) + "px");
-      heroView.style.setProperty("--hero-shift-y", ((y * 2 - 1) * Math.min(2.5, box.height * .005)) + "px");
+      heroView.style.setProperty("--hero-shift-x", ((x * 2 - 1) * 6) + "px");
+      heroView.style.setProperty("--hero-shift-y", ((y * 2 - 1) * 4) + "px");
       heroView.style.setProperty("--hero-glow-x", (x * 100) + "%");
       heroView.style.setProperty("--hero-glow-y", (y * 100) + "%");
       heroView.dataset.tracking = "true";
     });
   }, { passive: true });
   heroView.addEventListener("pointerleave", resetHeroPointer);
-  heroControls.addEventListener("click", (event) => {
-    const button = event.target.closest("button[data-showcase]");
-    if (button) renderShowcase(Number(button.dataset.showcase));
-  });
 
   $("services-list").innerHTML = data.services.map((service, index) => `
     <li><span class="service-index mono" aria-hidden="true">${ordinal(index)}</span>
@@ -503,6 +567,7 @@
     const prior = activeProject;
     if (project && project !== prior) {
       if (!prior) homeScroll = scrollY;
+      cancelHoverPreview();
       if ($("media-dialog").open) $("media-dialog").close();
       activeProject = project;
       renderCase(project);
@@ -524,10 +589,12 @@
           if (location.hash !== hash || activeProject) return;
           if (anchor && !anchor.hidden) anchor.scrollIntoView({ block: "start", behavior: "instant" });
           else if (prior) window.scrollTo({ top: homeScroll, behavior: "instant" });
+          syncHeroHeader();
           if (shouldFocus) $("main").focus({ preventScroll: true });
         });
       }
     }
+    syncHeroHeader();
     syncHeroMotion();
     for (const link of document.querySelectorAll(".site-nav a")) {
       if (!project && link.getAttribute("href") === hash) link.setAttribute("aria-current", "location");
@@ -556,6 +623,7 @@
     note.innerHTML = [esc(item.note), creditTag(item)].filter(Boolean).join(" · ");
     note.hidden = !note.innerHTML;
     mediaDialog.showModal();
+    syncHeroMotion();
     mediaBody.scrollTo(0, 0);
     if (isVideo) {
       const video = mediaBody.querySelector("video");
@@ -577,6 +645,7 @@
     mediaBody.querySelector("video")?.pause();
     mediaBody.replaceChildren();
     if (mediaTrigger?.isConnected) mediaTrigger.focus({ preventScroll: true });
+    syncHeroMotion();
   });
 
   const briefDialog = $("brief-dialog");
@@ -645,6 +714,7 @@
     }
   });
 })().catch(() => {
+  document.getElementById("site-head").removeAttribute("data-over-hero");
   document.getElementById("load-error").hidden = false;
   document.getElementById("home-view").hidden = true;
 });

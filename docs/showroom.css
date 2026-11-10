@@ -37,7 +37,7 @@
   border: 1px solid #36303e;
   background: radial-gradient(ellipse 100% 70% at 50% 0%, var(--cue-wash), transparent), #100e15;
 }
-@media (min-width: 950px) { .showroom-player { position: sticky; top: 22px; } }
+@media (min-width: 950px) { .showroom-player { position: sticky; top: calc(var(--site-header-height) + 22px); } }
 .showroom-top, .showroom-caption { display: flex; justify-content: space-between; gap: 8px 16px; align-items: center; padding: 10px 12px; }
 .showroom-top { min-height: 38px; color: var(--muted); }
 .showroom-top > span:first-child { display: inline-flex; align-items: center; gap: 8px; color: var(--cue); }
