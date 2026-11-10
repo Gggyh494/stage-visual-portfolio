@@ -1,0 +1,5 @@
+{
+  "version": 1,
+  "include": ["/admin", "/admin/*", "/*%*", "//*/*", "/media/*.mp4", "/media/*.webm"],
+  "exclude": []
+}

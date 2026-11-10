@@ -10,6 +10,13 @@
 
 本机管理只监听 127.0.0.1，编辑工具不在 GitHub Pages 的发布目录里。需要单独发一个本地预览文件，可运行 `node pack.mjs preview.html`。这个预览文件会包含本地素材；外链素材仍需要网络。
 
+## 国内访问地址
+
+- [GitHub Pages 备份](https://gggyh494.github.io/stage-visual-portfolio/) 是现有的公开入口。
+- Cloudflare Pages 作为面向大陆访客的另一访问入口，`pages.dev` 地址以控制台首次部署结果为准。大陆访问表现以手机直连测试为准。
+
+两个项目都从 GitHub 的 `main` 分支发布 `docs`。在 Cloudflare Pages 连接此仓库时，根目录使用仓库根目录，框架预设选 None，构建命令填 `exit 0`，发布目录填 `docs`。接入完成后，推送 `main` 上的作品更新会触发两边自动部署。Cloudflare 的 `/admin` 及其子路径返回 404，站内 MP4 和 WebM 由 Pages Functions 提供分段响应。
+
 ## 发布到个人 GitHub
 
 1. 把模板目录里的文件放到目标仓库根目录，保留 `.pages.yml` 和 `docs/.nojekyll`。不要上传打包生成的单文件预览，GitHub Pages 直接使用 `docs/`。
