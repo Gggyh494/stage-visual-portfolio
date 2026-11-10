@@ -222,6 +222,5 @@
     section.hidden = false;
     byId("motion-nav").hidden = false;
     select(0);
-    if (location.hash === "#motion") requestAnimationFrame(() => section.scrollIntoView({ block: "start", behavior: "instant" }));
   };
 })();

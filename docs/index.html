@@ -47,8 +47,23 @@
           </div>
         </div>
         <div class="hero-surface">
-          <div class="hero-visual"><img id="hero-image" fetchpriority="high" alt=""></div>
+          <div class="hero-visual">
+            <div class="hero-stage">
+              <img id="hero-image" fetchpriority="high" alt="">
+              <img id="hero-next-image" alt="" aria-hidden="true" hidden>
+              <div class="hero-video-layer" aria-hidden="true">
+                <video id="hero-video" muted loop playsinline preload="none" disablepictureinpicture tabindex="-1"></video>
+              </div>
+            </div>
+            <div class="hero-glow" aria-hidden="true"></div>
+          </div>
           <span class="hero-stamp mono" id="hero-status">概念样板</span>
+          <button class="hero-motion-toggle" id="hero-motion-toggle" type="button" aria-label="播放首屏动效" title="播放首屏动效" hidden>
+            <svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" fill="currentColor">
+              <path class="hero-motion-play" d="M5 2.5v11l8-5.5z"/>
+              <path class="hero-motion-pause" d="M4.5 3h2v10h-2zm5 0h2v10h-2z"/>
+            </svg>
+          </button>
         </div>
         <div class="hero-foot">
           <div class="hero-project" aria-live="polite">

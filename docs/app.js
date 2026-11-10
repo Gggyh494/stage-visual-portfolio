@@ -105,26 +105,191 @@
   }
   const featured = projectById.get(hero.featured) || projects[0];
   const showcase = featured ? [featured, ...projects.filter((p) => p !== featured)].slice(0, 3) : [];
-  let showcaseIndex = 0;
+  let showcaseIndex = -1;
   const heroControls = $("hero-select");
   heroControls.hidden = showcase.length < 2;
   heroControls.innerHTML = showcase.map((project, i) => `
     <button class="hero-step mono" type="button" data-showcase="${i}" aria-label="预览：${esc(project.name)}" aria-pressed="false">${ordinal(i)}</button>`).join("");
 
+  const heroView = document.querySelector(".hero-visual");
+  const heroImage = $("hero-image");
+  const nextHeroImage = $("hero-next-image");
+  const heroVideo = $("hero-video");
+  const heroVideoLayer = heroVideo.parentElement;
+  const motionToggle = $("hero-motion-toggle");
+  const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
+  const reducedData = matchMedia("(prefers-reduced-data: reduce)");
+  const compactHero = matchMedia("(max-width: 690px), (pointer: coarse)");
+  const mouseHover = matchMedia("(hover: hover) and (pointer: fine)");
+  const connection = navigator.connection;
+  const autoMotion = () => !reducedMotion.matches && !reducedData.matches && !compactHero.matches && !connection?.saveData;
+  const decorateHero = () => autoMotion() && motionChoice !== false && !playBlocked;
+  const heroMotionEnabled = () => Boolean(heroClip && (motionChoice ?? autoMotion()) && !playBlocked);
+  const usesVideoFrames = typeof heroVideo.requestVideoFrameCallback === "function";
+  const clampUnit = (value) => Math.max(0, Math.min(1, value));
+  let heroClip = "";
+  let motionChoice;
+  let playBlocked = false;
+  let heroInView = !("IntersectionObserver" in window);
+  let posterBusy = false;
+  let posterFade;
+  let selectionRevision = 0;
+  let playAttempt;
+  let videoFrame = null;
+  let pointerFrame = 0;
+  heroVideo.muted = true;
+
+  function paintVideoEdge(time) {
+    const duration = heroVideo.duration;
+    const edge = Math.min(.42, duration / 4);
+    const t = Number.isFinite(duration) && edge > 0 ? clampUnit(Math.min(time, duration - time) / edge) : 0;
+    heroVideo.style.opacity = String(t * t * (3 - 2 * t));
+  }
+  function updateVideoFrame(_, frame) {
+    videoFrame = null;
+    if (heroVideo.paused) return;
+    paintVideoEdge(frame?.mediaTime ?? heroVideo.currentTime);
+    queueVideoFrame();
+  }
+  function queueVideoFrame() {
+    if (videoFrame !== null || heroVideo.paused) return;
+    videoFrame = usesVideoFrames
+      ? heroVideo.requestVideoFrameCallback(updateVideoFrame)
+      : requestAnimationFrame(updateVideoFrame);
+  }
+  function hideHeroVideo() {
+    heroVideoLayer.classList.remove("is-visible");
+    if (videoFrame === null) return;
+    if (usesVideoFrames) heroVideo.cancelVideoFrameCallback(videoFrame);
+    else cancelAnimationFrame(videoFrame);
+    videoFrame = null;
+  }
+  heroVideo.addEventListener("pause", () => { if (heroVideo.paused) hideHeroVideo(); });
+
+  function resetHeroPointer() {
+    if (pointerFrame) cancelAnimationFrame(pointerFrame);
+    pointerFrame = 0;
+    delete heroView.dataset.tracking;
+  }
+
+  function syncHeroMotion() {
+    const enabled = heroMotionEnabled();
+    motionToggle.hidden = !heroClip;
+    motionToggle.disabled = posterBusy;
+    motionToggle.dataset.playing = String(enabled);
+    const label = enabled ? "暂停首屏动效" : "播放首屏动效";
+    motionToggle.setAttribute("aria-label", label);
+    motionToggle.title = label;
+    if (!decorateHero() || !mouseHover.matches) resetHeroPointer();
+    if (!enabled || posterBusy || !heroInView || document.hidden || $("home-view").hidden) {
+      playAttempt = null;
+      heroVideo.pause();
+      hideHeroVideo();
+      return;
+    }
+    if (heroVideo.getAttribute("src") !== heroClip || heroVideo.error) {
+      heroVideo.style.opacity = "0";
+      heroVideo.src = heroClip;
+    }
+    if (playAttempt || !heroVideo.paused) return;
+    const attempt = heroVideo.play();
+    playAttempt = attempt;
+    attempt.then(() => {
+      if (playAttempt !== attempt) return;
+      playAttempt = null;
+      paintVideoEdge(heroVideo.currentTime);
+      heroVideoLayer.classList.add("is-visible");
+      queueVideoFrame();
+    }).catch(() => {
+      if (playAttempt !== attempt) return;
+      playAttempt = null;
+      playBlocked = true;
+      syncHeroMotion();
+    });
+  }
+  motionToggle.addEventListener("click", () => {
+    motionChoice = !heroMotionEnabled();
+    playBlocked = false;
+    syncHeroMotion();
+  });
+  heroVideo.addEventListener("error", () => {
+    if (posterBusy || heroVideo.getAttribute("src") !== heroClip) return;
+    playBlocked = true;
+    syncHeroMotion();
+  });
+  if ("IntersectionObserver" in window) new IntersectionObserver(([entry]) => {
+    heroInView = entry.intersectionRatio >= .1;
+    syncHeroMotion();
+  }, { threshold: .1 }).observe(heroView);
+  document.addEventListener("visibilitychange", syncHeroMotion);
+
+  let wasAuto = autoMotion();
+  function updateMotionPreference() {
+    const allowed = autoMotion();
+    if (wasAuto && !allowed && motionChoice === true) motionChoice = undefined;
+    wasAuto = allowed;
+    if (!decorateHero()) posterFade?.finish();
+    syncHeroMotion();
+    if (!allowed && !heroMotionEnabled() && heroVideo.hasAttribute("src")) {
+      heroVideo.removeAttribute("src");
+      heroVideo.load();
+    }
+  }
+  for (const query of [reducedMotion, reducedData, compactHero]) query.addEventListener?.("change", updateMotionPreference);
+  mouseHover.addEventListener?.("change", resetHeroPointer);
+  connection?.addEventListener?.("change", updateMotionPreference);
+
+  async function swapHeroPoster(path, alt, revision) {
+    const url = mediaUrl(path);
+    posterFade?.cancel();
+    posterFade = null;
+    nextHeroImage.hidden = true;
+    if (url && url !== heroImage.getAttribute("src") && heroImage.naturalWidth && decorateHero() && nextHeroImage.animate && nextHeroImage.decode) {
+      nextHeroImage.src = url;
+      const ready = await nextHeroImage.decode().then(() => true, () => false);
+      if (revision !== selectionRevision) return;
+      if (ready && decorateHero()) {
+        nextHeroImage.hidden = false;
+        posterFade = nextHeroImage.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 230, easing: "ease-out", fill: "both" });
+        await posterFade.finished.catch(() => {});
+        if (revision !== selectionRevision) return;
+      }
+    }
+    heroImage.alt = alt;
+    heroImage.removeAttribute("width");
+    heroImage.removeAttribute("height");
+    if (dimensions[mediaPath(path)]) [heroImage.width, heroImage.height] = dimensions[mediaPath(path)];
+    if (url) heroImage.src = url;
+    else heroImage.removeAttribute("src");
+    heroImage.hidden = !url;
+    if (!nextHeroImage.hidden) {
+      await heroImage.decode().catch(() => {});
+      if (revision !== selectionRevision) return;
+    }
+    nextHeroImage.hidden = true;
+    nextHeroImage.removeAttribute("src");
+    posterFade?.cancel();
+    posterFade = null;
+  }
+
   function renderShowcase(index) {
+    if (index === showcaseIndex) return;
     showcaseIndex = index;
     const project = showcase[index];
     const useCover = index === 0 && mediaUrl(hero.image);
     const image = useCover ? hero.image : project?.cover;
-    const node = $("hero-image");
-    node.alt = useCover ? hero.alt || project?.coverAlt || "" : project?.coverAlt || "";
-    node.removeAttribute("width");
-    node.removeAttribute("height");
-    if (dimensions[mediaPath(image)]) [node.width, node.height] = dimensions[mediaPath(image)];
-    const url = mediaUrl(image);
-    if (url) node.src = url;
-    else node.removeAttribute("src");
-    node.hidden = !url;
+    const alt = (useCover ? hero.alt || project?.coverAlt : project?.coverAlt) || "";
+    const revision = ++selectionRevision;
+    heroClip = mediaUrl(hero.motion?.[project?.id]);
+    if (motionChoice === true && !autoMotion()) motionChoice = undefined;
+    playBlocked = false;
+    posterBusy = true;
+    syncHeroMotion();
+    swapHeroPoster(image, alt, revision).then(() => {
+      if (revision !== selectionRevision) return;
+      posterBusy = false;
+      syncHeroMotion();
+    });
     $("featured-link").hidden = !project;
     if (project) $("featured-link").href = caseHref(project);
     put("featured-name", project?.name);
@@ -134,7 +299,6 @@
     }
   }
   renderShowcase(0);
-  const heroView = document.querySelector(".hero-visual");
   let swipeOrigin;
   heroView.addEventListener("pointerdown", (event) => {
     if (event.pointerType === "touch") swipeOrigin = { x: event.clientX, y: event.clientY, id: event.pointerId };
@@ -150,10 +314,23 @@
     }
   }, { passive: true });
   heroView.addEventListener("pointercancel", () => { swipeOrigin = undefined; }, { passive: true });
-  const reduced = matchMedia("(prefers-reduced-motion: reduce)");
-  $("hero-image").addEventListener("load", () => {
-    if (!reduced.matches) $("hero-image").animate([{ opacity: .74, scale: ".997" }, { opacity: 1, scale: "1" }], { duration: 300, easing: "ease-out" });
-  });
+  heroView.addEventListener("pointermove", (event) => {
+    if (event.pointerType !== "mouse" || !mouseHover.matches || !decorateHero()) return;
+    if (pointerFrame) cancelAnimationFrame(pointerFrame);
+    pointerFrame = requestAnimationFrame(() => {
+      pointerFrame = 0;
+      const box = heroView.getBoundingClientRect();
+      if (!box.width || !box.height) return;
+      const x = clampUnit((event.clientX - box.left) / box.width);
+      const y = clampUnit((event.clientY - box.top) / box.height);
+      heroView.style.setProperty("--hero-shift-x", ((x * 2 - 1) * Math.min(4, box.width * .005)) + "px");
+      heroView.style.setProperty("--hero-shift-y", ((y * 2 - 1) * Math.min(2.5, box.height * .005)) + "px");
+      heroView.style.setProperty("--hero-glow-x", (x * 100) + "%");
+      heroView.style.setProperty("--hero-glow-y", (y * 100) + "%");
+      heroView.dataset.tracking = "true";
+    });
+  }, { passive: true });
+  heroView.addEventListener("pointerleave", resetHeroPointer);
   heroControls.addEventListener("click", (event) => {
     const button = event.target.closest("button[data-showcase]");
     if (button) renderShowcase(Number(button.dataset.showcase));
@@ -339,17 +516,19 @@
       caseView.hidden = true;
       $("home-view").hidden = false;
       document.title = studioTitle;
-      if (prior) {
-        caseView.replaceChildren();
-        const anchor = ["#work", "#motion", "#services", "#contact", "#top", "#main"].includes(hash)
-          ? $(hash.slice(1)) : null;
+      if (prior) caseView.replaceChildren();
+      const anchor = ["#work", "#motion", "#services", "#contact", "#top", "#main"].includes(hash)
+        ? $(hash.slice(1)) : null;
+      if (prior || (!shouldFocus && anchor)) {
         requestAnimationFrame(() => {
-          if (anchor) anchor.scrollIntoView({ block: "start", behavior: "instant" });
-          else window.scrollTo({ top: homeScroll, behavior: "instant" });
+          if (location.hash !== hash || activeProject) return;
+          if (anchor && !anchor.hidden) anchor.scrollIntoView({ block: "start", behavior: "instant" });
+          else if (prior) window.scrollTo({ top: homeScroll, behavior: "instant" });
           if (shouldFocus) $("main").focus({ preventScroll: true });
         });
       }
     }
+    syncHeroMotion();
     for (const link of document.querySelectorAll(".site-nav a")) {
       if (!project && link.getAttribute("href") === hash) link.setAttribute("aria-current", "location");
       else link.removeAttribute("aria-current");
