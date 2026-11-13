@@ -108,6 +108,8 @@
         ${field("工作室名称", "studio.name", { required: true, max: 60 })}
         ${field("英文副标题", "studio.english", { required: true, max: 100 })}
         ${field("合作邮箱", "studio.email", { type: "email", max: 160 })}
+        ${field("商务微信号（可选）", "studio.wechat", { max: 80, hint: "访客可以在合作区复制微信号。" })}
+        <label class="check"><input name="studio.contactPlaceholder" type="checkbox"${model.studio.contactPlaceholder === true ? " checked" : ""}>使用示例联系方式（正式使用前取消）</label>
         <label class="check"><input name="studio.demo" type="checkbox"${model.studio.demo ? " checked" : ""}>显示概念样板标记</label>
       </div></section>
       <section class="group"><h2>首屏与文案</h2><div class="grid">
@@ -299,6 +301,7 @@
     status("正在保存更改…");
     try {
       model.studio.email = model.studio.email?.trim() || "";
+      model.studio.wechat = model.studio.wechat?.trim() || "";
       const output = await api("save", {
         method: "POST", headers: { "content-type": "application/json", "x-stage-editor": token },
         body: JSON.stringify({ model, revision }),

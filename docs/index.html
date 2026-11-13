@@ -59,12 +59,13 @@
           <span class="hero-reel-icon">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 4.5v15l12-7.5z"/></svg>
           </span>
-          <span>播放片段</span>
+          <span>播放作品混剪</span>
         </button>
         <div class="hero-overlay">
           <div class="hero-signature">
             <h1 id="hero-wordmark">折光</h1>
             <p id="hero-title">舞台视觉与大屏内容</p>
+            <a class="hero-work-link" href="#work">看案例 <span aria-hidden="true">↓</span></a>
           </div>
           <div class="hero-projects" id="hero-projects" hidden>
             <div class="hero-project-picker">
@@ -142,8 +143,8 @@
           <p id="contact-description">告诉我们活动时间、舞台类型和屏幕规格。<br>我们可以从一份清楚的需求开始聊。</p>
         </div>
         <div class="contact-actions">
+          <div class="contact-methods" data-contact-methods hidden></div>
           <button class="button button-primary" type="button" data-brief>整理合作需求 <span aria-hidden="true">↗</span></button>
-          <a class="contact-email" id="contact-email" hidden></a>
         </div>
       </div>
     </section>
@@ -173,6 +174,8 @@
       <button class="subtle-button" type="button" data-close="brief-dialog" aria-label="关闭合作需求">关闭 <span aria-hidden="true">×</span></button>
     </div>
     <form id="brief-form" class="brief-form">
+      <div class="contact-methods" data-contact-methods hidden></div>
+      <p class="brief-hint" id="brief-project" hidden></p>
       <div class="form-pair">
         <label>项目类型<select name="kind" id="brief-kind" required></select></label>
         <label>演出日期 <small>选填</small><input name="date" type="text" maxlength="60" placeholder="例如：2027 年 5 月"></label>

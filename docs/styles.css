@@ -165,6 +165,8 @@ main:focus, h1:focus { outline: none; }
   pointer-events: none;
 }
 .hero-signature { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 8px clamp(12px, 2.5vw, 40px); min-width: 0; }
+.hero-work-link { display: inline-flex; align-items: center; justify-content: space-between; gap: 28px; min-height: 44px; padding: 8px 14px; border: 1px solid #f1eff67a; background: #09090c75; font-size: 13px; pointer-events: auto; }
+.hero-work-link:is(:hover, :focus-visible) { border-color: var(--accent); background: #09090cc9; }
 .hero-signature h1 {
   font-size: clamp(94px, 15vw, 252px);
   font-weight: 690;
@@ -248,6 +250,12 @@ main:focus, h1:focus { outline: none; }
 .contact-inner { border-top: 1px solid #766b94; background: radial-gradient(ellipse 75% 185% at 89% 119%, transparent 24%, #40235f76 42%, #542c7d4f 54%, transparent 76%), #110f15; padding: clamp(24px, 4.2vw, 68px); display: flex; align-items: flex-end; justify-content: space-between; gap: 22px; }
 .contact p:not(.eyebrow) { margin-top: 15px; color: var(--muted); white-space: pre-line; }
 .contact-actions { display: grid; justify-items: end; gap: 10px; }
+.contact-methods { display: grid; gap: 8px; min-width: 0; }
+.contact-wechat { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px; overflow-wrap: anywhere; }
+.contact-wechat > span { user-select: all; }
+.contact-hint { color: var(--muted); font-size: 12px; }
+.contact-hint:empty { display: none; }
+.contact-email:not([href]) { text-decoration: none; }
 .button { display: inline-flex; align-items: center; justify-content: center; gap: 17px; border: 1px solid transparent; border-radius: 2px; min-height: 44px; padding: 8px 16px; font-size: 14px; font-weight: 650; white-space: nowrap; }
 .button-primary { background: var(--accent); color: #161121; }
 .button-primary:hover { background: #e0d6ff; }
@@ -260,6 +268,7 @@ main:focus, h1:focus { outline: none; }
 
 /* Case detail. No fixed aspect ratio or cover cropping for project media. */
 .case-view { padding-top: calc(var(--site-header-height) + clamp(22px, 4vw, 55px)); }
+.case-enquiry { margin-block: 24px; }
 .case-nav { display: flex; align-items: center; justify-content: space-between; gap: 12px; color: var(--muted); border-bottom: 1px solid var(--line); padding-bottom: 12px; }
 .back-link { font-size: 13px; color: var(--ink); padding-block: 5px; }
 .back-link:hover, .case-next:hover { color: var(--accent); }
@@ -375,6 +384,7 @@ dialog::backdrop { background: #08070ce8; }
   .hero-signature { align-items: baseline; }
   .hero-signature h1 { font-size: clamp(68px, 22vw, 130px); }
   .hero-signature p { padding-bottom: 0; font-size: 12px; }
+  .hero-work-link { flex-basis: 100%; max-width: 155px; }
   .hero-reel-icon { width: 60px; height: 60px; }
   .hero-select { justify-items: start; }
   .hero-project-link { min-height: 40px; }

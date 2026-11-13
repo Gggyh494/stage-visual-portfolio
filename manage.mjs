@@ -107,6 +107,12 @@ async function verifyContent(value) {
   string(studio.english, "工作室副标题", true, 100);
   const email = string(studio.email, "邮箱", false, 160);
   if (email && !/^[^\s@?&]+@[^\s@?&]+\.[^\s@?&]+$/.test(email)) throw fail(422, "请输入有效的合作邮箱。");
+  const wechat = string(studio.wechat, "商务微信号", false, 80);
+  if (/[\x00-\x1f\x7f-\x9f\u2028\u2029]/.test(studio.wechat ?? "")) throw fail(422, "商务微信号不能包含换行或控制字符。");
+  if (studio.wechat !== undefined) studio.wechat = wechat;
+  if (studio.contactPlaceholder !== undefined && typeof studio.contactPlaceholder !== "boolean") {
+    throw fail(422, "示例联系方式标记格式有误。");
+  }
   if (typeof studio.demo !== "boolean") throw fail(422, "示例标记格式有误。");
   string(hero.title, "首页标题", true, 60);
   for (const key of ["intro", "caption", "alt"]) string(hero[key], "首页文案");

@@ -21,7 +21,9 @@
   const category = (id) => categories.find((item) => item.id === id)?.label || id;
   const projectById = new Map(projects.map((project) => [project.id, project]));
   const email = /^[^\s@?&]+@[^\s@?&]+\.[^\s@?&]+$/.test(studio.email) ? studio.email : "";
-  const emailHref = email ? "mailto:" + encodeURIComponent(email).replace("%40", "@") : "";
+  const wechat = typeof studio.wechat === "string" ? studio.wechat.trim() : "";
+  const contactPlaceholder = studio.contactPlaceholder === true;
+  const emailHref = email && !contactPlaceholder ? "mailto:" + encodeURIComponent(email).replace("%40", "@") : "";
   const studioTitle = studio.name + " · 舞台视觉作品集";
 
   function mediaPath(path) {
@@ -114,8 +116,9 @@
   const mouseHover = matchMedia("(any-hover: hover) and (any-pointer: fine)");
   const connection = navigator.connection;
   const autoMotion = () => !reducedMotion.matches && !reducedData.matches && !connection?.saveData;
+  const autoVideo = () => autoMotion() && !["slow-2g", "2g", "3g"].includes(connection?.effectiveType);
   const decorateHero = () => autoMotion() && motionChoice !== false && !playBlocked;
-  const heroMotionEnabled = () => Boolean(heroClip && (motionChoice ?? autoMotion()) && !playBlocked);
+  const heroMotionEnabled = () => Boolean(heroClip && (motionChoice ?? autoVideo()) && !playBlocked);
   const usesVideoFrames = typeof heroVideo.requestVideoFrameCallback === "function";
   const clampUnit = (value) => Math.max(0, Math.min(1, value));
   let heroClip = "";
@@ -232,9 +235,9 @@
   }, { threshold: .1 }).observe(heroView);
   document.addEventListener("visibilitychange", syncHeroMotion);
 
-  let wasAuto = autoMotion();
+  let wasAuto = autoVideo();
   function updateMotionPreference() {
-    const allowed = autoMotion();
+    const allowed = autoVideo();
     if (wasAuto && !allowed && motionChoice === true) motionChoice = undefined;
     wasAuto = allowed;
     if (!decorateHero()) posterFade?.finish();
@@ -294,7 +297,7 @@
     heroClip = mediaUrl(clip);
     // The packaged hero clips return to the same camera and light phase on each loop.
     seamlessClip = mediaPath(clip).startsWith("media/hero/");
-    if (motionChoice === true && !autoMotion()) motionChoice = undefined;
+    if (motionChoice === true && !autoVideo()) motionChoice = undefined;
     playBlocked = false;
     posterBusy = true;
     syncHeroMotion();
@@ -402,14 +405,35 @@
     ...categories.map((item) => `<option>${esc(item.label)}</option>`),
     "<option>其他舞台项目</option>",
   ].join("");
-  if (email) {
-    const link = $("contact-email");
-    link.href = emailHref;
-    link.textContent = email;
-    link.hidden = false;
+  for (const container of document.querySelectorAll("[data-contact-methods]")) {
+    container.hidden = !email && !wechat;
+    container.innerHTML = `
+      ${email ? (emailHref
+        ? `<a class="contact-email" href="${esc(emailHref)}">${esc(email)}</a>`
+        : `<span class="contact-email">${esc(email)}</span>`) : ""}
+      ${wechat ? `<div class="contact-wechat"><span>微信 ${esc(wechat)}</span>${contactPlaceholder ? "" : '<button type="button" class="subtle-button" data-copy-wechat>复制微信号</button>'}</div>` : ""}
+      ${contactPlaceholder ? '<small class="contact-hint">示例联系方式 · 正式使用前请替换</small>' : ""}
+      <span class="contact-hint" role="status" data-contact-status></span>`;
+  }
+  if (emailHref) {
     $("brief-email").hidden = false;
     put("brief-hint", "整理好的需求可以复制，也可以在你的邮件应用中继续发送。");
+  } else if (contactPlaceholder) {
+    put("brief-hint", "可以试填并复制需求。当前联系方式为示例，尚未接入收件人。");
+  } else if (wechat) {
+    put("brief-hint", "复制需求后，可在微信里发给我们。");
   }
+  document.addEventListener("click", async (event) => {
+    const button = event.target.closest("[data-copy-wechat]");
+    if (!button || contactPlaceholder || !wechat) return;
+    const feedback = button.closest("[data-contact-methods]").querySelector("[data-contact-status]");
+    try {
+      await navigator.clipboard.writeText(wechat);
+      feedback.textContent = "微信号已复制，可以在微信中搜索添加。";
+    } catch {
+      feedback.textContent = "请选中或长按上方微信号复制。";
+    }
+  });
 
   let filter = "";
   let filterTransition;
@@ -524,7 +548,7 @@
     const video = project.video;
     caseMedia = [
       { type: "image", src: project.cover, alt: project.coverAlt, aspect: project.coverAspect, label: "项目全景", note: studio.demo ? "概念渲染" : "" },
-      ...(mediaUrl(sourceOf(video)) ? [{ ...video, type: "video", label: video.title || "现场片段" }] : []),
+      ...(mediaUrl(sourceOf(video)) ? [{ ...video, type: "video", label: video.title || "项目视频" }] : []),
       ...(project.gallery || []).filter((item) => mediaUrl(item.type === "video" ? sourceOf(item) : item.src)),
     ].filter((item) => mediaUrl(item.type === "video" ? sourceOf(item) : item.src));
     const selector = caseMedia.map((item, n) => `
@@ -552,6 +576,7 @@
         <section><h2>项目需求</h2><p>${esc(project.brief)}</p></section>
         <section><h2>视觉方向</h2><p>${esc(project.concept)}</p></section>
       </div>
+      <div class="case-enquiry"><button class="button button-secondary" type="button" data-brief>咨询类似项目 <span aria-hidden="true">↗</span></button></div>
       ${next ? `<a class="case-next" href="${esc(caseHref(next))}"><span class="mono">下个项目 / NEXT</span><strong>${esc(next.name)} ↗</strong></a>` : ""}`;
     renderCaseMedia(0);
   }
@@ -662,6 +687,8 @@
 
   const briefDialog = $("brief-dialog");
   let briefTrigger;
+  let briefProject;
+  const briefDrafts = new Map();
   const status = $("brief-status");
   const manual = $("manual-copy");
 
@@ -675,6 +702,16 @@
     }
     if (trigger.hasAttribute("data-brief")) {
       briefTrigger = trigger;
+      const form = $("brief-form");
+      briefDrafts.set(briefProject?.id || "", [...new FormData(form)]);
+      briefProject = activeProject;
+      form.reset();
+      for (const [name, value] of briefDrafts.get(briefProject?.id || "") || []) {
+        form.elements.namedItem(name).value = value;
+      }
+      put("brief-project", briefProject ? "参考案例：" + briefProject.name : "");
+      $("brief-project").hidden = !briefProject;
+      if (briefProject && !$("brief-kind").value) $("brief-kind").value = category(briefProject.category);
       status.hidden = true;
       manual.hidden = true;
       briefDialog.showModal();
@@ -695,6 +732,7 @@
     }
     const brief = [
       "舞台视觉合作需求",
+      ...(briefProject ? ["参考案例：" + briefProject.name] : []),
       "",
       "项目类型：" + values.get("kind"),
       "演出日期：" + (String(values.get("date") || "").trim() || "待定"),

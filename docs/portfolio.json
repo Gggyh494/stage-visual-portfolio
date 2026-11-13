@@ -2,8 +2,10 @@
   "studio": {
     "name": "折光",
     "english": "REFRACT / STAGE VISUALS",
-    "email": "",
-    "demo": true
+    "email": "hello@example.com",
+    "demo": true,
+    "wechat": "",
+    "contactPlaceholder": true
   },
   "hero": {
     "title": "舞台视觉与大屏内容",
@@ -23,12 +25,12 @@
     },
     "caption": "现场影像 / 大屏原画 / 舞台预演",
     "reel": {
-      "src": "/media/live-sample.mp4",
-      "poster": "/media/live-poster.webp",
-      "title": "现场影像示例",
-      "note": "现场素材用于演示播放器，与概念案例不是同一场演出。",
-      "credit": "Vung Nguyen / Pexels",
-      "creditUrl": "https://www.pexels.com/video/people-on-concert-13054630/"
+      "src": "/media/portfolio-reel.mp4",
+      "poster": "/media/portfolio-reel.webp",
+      "title": "作品混剪 · 24 秒",
+      "note": "六组概念样板的舞台预演与大屏内容。画面展示概念方向与屏幕适配。",
+      "credit": "折光 · 概念样板",
+      "creditUrl": ""
     },
     "intro": "巡演、品牌发布会与沉浸式演出",
     "featuredProjects": [
@@ -88,12 +90,12 @@
       "brief": "电子音乐演出的概念案例。开场需要一眼建立舞台的视觉记忆，曲目间则要留出足够的空间给灯光与表演。",
       "concept": "用银色曲面呈现声波。开场时曲面从屏幕两侧向中央汇聚，进入曲目后再沿着横向画幅舒展，配合低频的起落。",
       "video": {
-        "src": "/media/live-sample.mp4",
-        "poster": "/media/live-poster.webp",
-        "title": "现场片段",
-        "note": "现场素材用于演示播放器，与本概念案例并非同一场演出。",
-        "credit": "Vung Nguyen / Pexels",
-        "creditUrl": "https://www.pexels.com/video/people-on-concert-13054630/"
+        "src": "/media/motion/afterimage-clean.mp4",
+        "poster": "/media/afterimage-led.webp",
+        "title": "动态原画 · 无字版",
+        "note": "概念样板 · 3:1 主屏动画，按完整画幅展示。",
+        "credit": "折光 · 概念样板",
+        "creditUrl": ""
       },
       "gallery": [
         {

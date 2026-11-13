@@ -21,7 +21,7 @@ export function mediaSlots(model) {
   };
   add("hero-image", "首页 · 首屏图", "image", model.hero, "image");
   add("hero-loop", "首页 · 首屏默认循环视频", "video", model.hero, "loopVideo");
-  video("hero-reel", "首页 · 现场片段", model.hero.reel);
+  video("hero-reel", "首页 · 作品混剪", model.hero.reel);
   for (const project of model.projects) {
     const id = project.id;
     const name = project.name;
